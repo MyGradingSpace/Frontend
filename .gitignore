@@ -21,3 +21,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# credentials
+cred.json
+cred_devcop.json
+cred_WLUTEST.json
