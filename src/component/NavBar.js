@@ -1,5 +1,6 @@
 import React from 'react';
 import LaurierLogo from '../image/Laurier-logo.png';
+import logo from '../image/logo.PNG';
 import { Avatar } from '@material-ui/core';
 
 
@@ -25,6 +26,11 @@ class NavBar extends React.Component {
                 height:'90px',
                 marginLeft:'5%',
             },
+            logo:{
+                display: 'inline-block',
+                height:'90px',
+                marginLeft:'-50px'
+            },
             nameBar:{
                 display: 'inline-block',
                 float: 'right',
@@ -43,7 +49,7 @@ class NavBar extends React.Component {
         return (<div>
             <div style={style.navBar}>
             <img style={style.laurierLogo} src={LaurierLogo} alt='Laurier-Logo' />
-            <div style={style.title}>MyGradingSpace</div>
+            <img style={style.logo} src={logo} alt='Logo' />
             <div style={style.nameBar}>
                 <Avatar variant="rounded" style={style.avatar}> NY </Avatar>
                 <div style={style.name}> Nina Yang</div>

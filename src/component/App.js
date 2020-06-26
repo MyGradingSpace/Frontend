@@ -5,6 +5,7 @@ import NavBar from './NavBar';
 import CreateGrading from './CreateGrading';
 import Outline from './Outline';
 import Home from './Home';
+import GradingStatus from './GradingStatus';
 
 class App extends React.Component {
 
@@ -32,8 +33,7 @@ class App extends React.Component {
             <BrowserRouter history={history}>
               <Switch>
                 <Route path="/" exact component={Home} />
-                {/* <Route path="/plans" exact component={NavBar} />
-                <Route path="/edit-plans" exact component={NavBar} /> */}
+                <Route path="/status" exact component={GradingStatus} />
               </Switch>
             </BrowserRouter>
           </div>
