@@ -6,6 +6,7 @@ import CreateGrading from './CreateGrading';
 import Outline from './Outline';
 import Home from './Home';
 import GradingStatus from './GradingStatus';
+import Login from './Login';
 
 class App extends React.Component {
 
@@ -34,6 +35,7 @@ class App extends React.Component {
               <Switch>
                 <Route path="/" exact component={Home} />
                 <Route path="/status" exact component={GradingStatus} />
+                <Route path="/login" exact component={Login} />
               </Switch>
             </BrowserRouter>
           </div>
