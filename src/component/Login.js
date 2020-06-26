@@ -1,19 +1,20 @@
 import React from 'react';
 import GoogleLogin from 'react-google-login';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { setLoginInformation } from '../actions';
 
 class Login extends React.Component {
 
     constructor() {
         super();
         this.state = {
-            loginData: '',
             login: null,
         }
     }
     responseGoogle = (response) => {
-        console.log(response);
-        this.setState({ loginData: response });
-        if(response.Rt.Bu.includes("@mylaurier.ca")) this.setState({ login: true });
+        this.props.setLoginInformation(response);
+        if (response.Rt.Bu.includes("@mylaurier.ca")) this.setState({ login: true });
     }
 
 
@@ -26,7 +27,7 @@ class Login extends React.Component {
                         <button onClick={renderProps.onClick} disabled={renderProps.disabled}>Google Login</button>
                     )}
                     onSuccess={this.responseGoogle}
-                    onFailure={this.responseGoogle}
+                    // onFailure={this.responseGoogle}
                     cookiePolicy={'single_host_origin'}
                 />
 
@@ -37,4 +38,13 @@ class Login extends React.Component {
 
 }
 
-export default Login;
+Login.propTypes = {
+    dispatch: PropTypes.func.isRequired,
+    setLoginInformation: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+    loginInformation: state.loginInformation
+});
+
+export default connect(mapStateToProps)(Login);
