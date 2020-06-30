@@ -7,6 +7,8 @@ import Outline from './Outline';
 import Home from './Home';
 import GradingStatus from './GradingStatus';
 import Login from './Login';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 class App extends React.Component {
 
@@ -22,33 +24,51 @@ class App extends React.Component {
       content: {
         backgroundColor: 'white',
         boxShadow: '0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12)',
-        minHeight:'90vh',
+        minHeight: '90vh',
       }
     }
 
     return (
-      <div>
-        <NavBar />
-        <div style={style.body}>
-          <div style={style.content}>
+      <>
+        {this.props.login && (
+          <>
+            <NavBar />
+            <div style={style.body}>
+              <div style={style.content}>
+                <BrowserRouter history={history}>
+                  <Switch>
+                    <Route path="/" exact component={Home} />
+                    <Route path="/status" exact component={GradingStatus} />
+                  </Switch>
+                </BrowserRouter>
+              </div>
+              <div></div>
+              <div>
+                <CreateGrading />
+                <Outline />
+              </div>
+            </div>
+          </>)}
+        {!this.props.login && (
+          <>
             <BrowserRouter history={history}>
               <Switch>
-                <Route path="/" exact component={Home} />
-                <Route path="/status" exact component={GradingStatus} />
-                <Route path="/login" exact component={Login} />
+                <Route path="/" exact component={Login} />
               </Switch>
             </BrowserRouter>
-          </div>
-          <div></div>
-          <div>
-            <CreateGrading />
-            <Outline />
-          </div>
-        </div>
-      </div >
+          </>)}
+      </>
     );
   }
 
 }
 
-export default App;
+Login.propTypes = {
+};
+
+const mapStateToProps = (state) => ({
+  login: state.login,
+});
+
+export default connect(mapStateToProps)(App);
+
