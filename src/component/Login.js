@@ -49,6 +49,7 @@ class Login extends React.Component {
                 left: '0',
                 top: '50%',
                 transform: 'translateY(-50%)',
+                textAlign:'center',
             },
             title: {
                 color: 'black',
@@ -68,6 +69,17 @@ class Login extends React.Component {
                 textAlign:'center',
                 margin:'0',
             },
+            loginbth:{
+                backgroundColor:'rgba(0,0,0,0.8)',
+                color:'white',
+                fontSize:'17px',
+                padding: '15px 80px',
+                fontFamily: "'Raleway', sans-serif",
+                textAlign:'center',
+                borderRadius:'80px',
+                marginTop:'40px',
+                wordSpacing:'1px',
+            }
         }
         return (
             <div style={style.body}>
@@ -75,13 +87,13 @@ class Login extends React.Component {
                 <div style={style.whiteBox}>
                     <p style={style.title}>My Grading Space</p>
                     <p style={style.subtitle}>Eazy Your Grading Life owo</p>
+                    <button style={style.loginbth}>Click Here to Login</button>
                 </div>
+                
                 <Button onClick={this.test}>haha</Button>
                 <GoogleLogin
                     clientId="782461757059-f5lr975a382rf04vgnu9vde71bjcfpdv.apps.googleusercontent.com"
-                    render={renderProps => (
-                        <button onClick={renderProps.onClick} disabled={renderProps.disabled}>Google Login</button>
-                    )}
+                    render={renderProps => ( <button onClick={renderProps.onClick} disabled={renderProps.disabled}>Google Login</button>)}
                     onSuccess={this.responseGoogle}
                     // onFailure={this.responseGoogle}
                     cookiePolicy={'single_host_origin'}
