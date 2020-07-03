@@ -1,18 +1,32 @@
 import React from 'react';
 import { Button, Stepper, Step, StepLabel, Select, MenuItem, TextField } from '@material-ui/core';
 import { erollments, dropbox } from '../fakeResponce';
+import history from '../history';
+import Box from '@material-ui/core/Box';
+import Collapse from '@material-ui/core/Collapse';
+import IconButton from '@material-ui/core/IconButton';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 
 class NewGrading extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            steps: 1,
-            selectCourse: "",
-            selectDropbox: "",
+            steps: 0,
+            selectCourse: '',
+            selectDropbox: '',
             coursesList: [],
             dropboxesList: [],
             testConfig: [{
-                filename: "",
+                filename: '',
                 testCases: [{
                     input: '',
                     output: '',
@@ -28,7 +42,8 @@ class NewGrading extends React.Component {
 
     handleNext = () => {
         if (this.state.steps === 3) {
-            this.closeDialog();
+            history.push("/");
+            window.location.reload();
         } else {
             this.setState({ steps: this.state.steps + 1 });
         }
@@ -75,12 +90,10 @@ class NewGrading extends React.Component {
         //     .catch(function (error) {
         //         console.log(error);
         //     });
-        console.log(orgUnitId);
         let list = [];
         dropbox.map((item) => {
             if (item['CategoryId'] === 10254) {
                 list.push(item);
-                console.log(item);
             }
         });
         this.setState({ dropboxesList: list });
@@ -96,21 +109,18 @@ class NewGrading extends React.Component {
         let config = this.state.testConfig;
         config[index].testCases[i].input = newInput;
         this.setState({ testConfig: config });
-        console.log(config);
     }
 
     outputOnchange = (index, i, newOutput) => {
         let config = this.state.testConfig;
         config[index].testCases[i].output = newOutput;
         this.setState({ testConfig: config });
-        console.log(config);
     }
 
     marksOnchange = (index, i, newMarks) => {
         let config = this.state.testConfig;
         config[index].testCases[i].marks = newMarks;
         this.setState({ testConfig: config });
-        console.log(config);
     }
 
     addTest = () => {
@@ -128,7 +138,9 @@ class NewGrading extends React.Component {
     }
 
     deleteTest = (index) => {
-
+        let config = this.state.testConfig;
+        config.splice(index, 1);
+        this.setState({ testConfig: config });
     }
 
     addCase = (index) => {
@@ -142,8 +154,10 @@ class NewGrading extends React.Component {
         this.setState({ testConfig: config });
     }
 
-    deleteCase = (index) => {
-
+    deleteCase = (index, i) => {
+        let config = this.state.testConfig;
+        config[index].testCases.splice(i, 1);
+        this.setState({ testConfig: config });
     }
 
     render() {
@@ -211,11 +225,15 @@ class NewGrading extends React.Component {
                             <div>
                                 {this.state.testConfig.map((test, index) => (
                                     <div>
+                                        <div style={{ marginTop: '20px', display: 'inline', fontSize: '25px', color: 'Red' }}> Test {index + 1}:</div>
+                                        <button onClick={() => this.deleteTest(index)}>delete Test</button>
+                                        <br />
                                         <div style={{ display: 'inline-block', marginTop: '20px' }}>Testing File Name</div>
                                         <TextField style={{ marginLeft: '20px', marginTop: '0px', width: 'calc(100% - 200px)' }} required label="Required" value={test.filename} onChange={(e) => this.filenameOnchange(index, e.target.value)} />
                                         {test.testCases.map((item, i) => (
-                                            <div>
-                                                <div style={{ marginTop: '10px' }}> Case {i + 1}:</div>
+                                            <div style={{ marginTop: '20px' }}>
+                                                <div style={{ marginTop: '20px', display: 'inline' }}> Case {i + 1}:</div>
+                                                <button onClick={() => this.deleteCase(index, i)}>delete case</button>
                                                 <div style={{ display: 'grid', gridTemplateColumns: '50% 50%', marginTop: '10px' }}>
                                                     <div>
                                                         <div>User Input:</div>
@@ -230,7 +248,7 @@ class NewGrading extends React.Component {
                                                 <TextField value={item.marks} style={{ marginTop: '10px', marginLeft: '20px', textAlign: 'center' }} type='number' onChange={(e) => this.marksOnchange(index, i, e.target.value.t)} />
                                             </div>
                                         ))}
-                                        <button onClick={() => this.addCase(0)}>add case</button>
+                                        <button onClick={() => this.addCase(index)}>add case</button>
                                     </div>
                                 ))}
                                 <button onClick={this.addTest}>add test</button>
@@ -238,10 +256,29 @@ class NewGrading extends React.Component {
 
                         {this.state.steps === 2 && (
                             <div>
-                                <div style={{ marginBottom: '10px' }}> Creat a new assignment grading for <b>CP493</b> - <b>Dropbox1</b></div>
-                                <div> Case1:  Test File: Answer File:</div>
-                                <div> Case2:  Test File: Answer File:</div>
-                                <div> Case3:  Test File: Answer File:</div>
+                                <div style={{ marginBottom: '10px' }}> Creat a new assignment grading for <b>{this.state.selectCourse}</b> - <b>{this.state.selectDropbox}</b></div>
+                                {this.state.testConfig.map((test, index) => (
+                                    <>
+                                        <div> Test {index + 1}:</div>
+                                        <div> Test File Name: {test.filename}</div>
+                                        <React.Fragment style={{ width: '100%' }}>
+                                            <TableRow>
+                                                <TableCell>Case Number</TableCell>
+                                                <TableCell>Case Input</TableCell>
+                                                <TableCell>Expect output</TableCell>
+                                                <TableCell>Marks Worth</TableCell>
+                                            </TableRow>
+                                            {test.testCases.map((item, i) => (
+                                                <TableRow style={{ width: '100%' }}>
+                                                    <TableCell>{i + 1}</TableCell>
+                                                    <TableCell>{item.input}</TableCell>
+                                                    <TableCell>{item.output}</TableCell>
+                                                    <TableCell>{item.marks}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </React.Fragment>
+                                    </>
+                                ))}
                             </div>)}
 
                         {this.state.steps === 3 && (
@@ -249,7 +286,7 @@ class NewGrading extends React.Component {
                                 <div style={{ marginBottom: '10px' }}> You All Set!</div>
                                 <div> Start Grading Now ... </div>
                             </div>)}
-                            
+
                         <div style={style.btnGroup}>
                             <Button variant="contained" disabled={this.state.steps === 0} onClick={this.handleBack} style={{ width: '100px', marginRight: '30px' }}> Back </Button>
                             <Button variant="contained" color="primary" onClick={this.handleNext} style={{ width: '100px' }}>
