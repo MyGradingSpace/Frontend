@@ -5,6 +5,7 @@ import NavBar from './NavBar';
 import CreateGrading from './CreateGrading';
 import Outline from './Outline';
 import Home from './Home';
+import NewGrading from './NewGrading';
 import GradingStatus from './GradingStatus';
 import Login from './Login';
 import { connect } from 'react-redux';
@@ -39,6 +40,7 @@ class App extends React.Component {
                   <Switch>
                     <Route path="/" exact component={Home} />
                     <Route path="/status" exact component={GradingStatus} />
+                    <Route path="/new-grading" exact component={NewGrading} />
                   </Switch>
                 </BrowserRouter>
               </div>

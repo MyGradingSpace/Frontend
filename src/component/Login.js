@@ -49,36 +49,36 @@ class Login extends React.Component {
                 left: '0',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                textAlign:'center',
+                textAlign: 'center',
             },
             title: {
                 color: 'black',
-                textTransform:'uppercase',
-                letterSpacing:'20px',
-                fontSize:'50px',
+                textTransform: 'uppercase',
+                letterSpacing: '20px',
+                fontSize: '50px',
                 fontFamily: "'Raleway', sans-serif",
-                textAlign:'center',
-                marginTop:'15vh',
+                textAlign: 'center',
+                marginTop: '15vh',
             },
             subtitle: {
                 color: 'black',
-                textTransform:'uppercase',
-                letterSpacing:'10px',
-                fontSize:'20px',
+                textTransform: 'uppercase',
+                letterSpacing: '10px',
+                fontSize: '20px',
                 fontFamily: "'Raleway', sans-serif",
-                textAlign:'center',
-                margin:'0',
+                textAlign: 'center',
+                margin: '0',
             },
-            loginbth:{
-                backgroundColor:'rgba(0,0,0,0.8)',
-                color:'white',
-                fontSize:'17px',
+            loginbth: {
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                color: 'white',
+                fontSize: '17px',
                 padding: '15px 80px',
                 fontFamily: "'Raleway', sans-serif",
-                textAlign:'center',
-                borderRadius:'80px',
-                marginTop:'40px',
-                wordSpacing:'1px',
+                textAlign: 'center',
+                borderRadius: '80px',
+                marginTop: '40px',
+                wordSpacing: '1px',
             }
         }
         return (
@@ -87,17 +87,17 @@ class Login extends React.Component {
                 <div style={style.whiteBox}>
                     <p style={style.title}>My Grading Space</p>
                     <p style={style.subtitle}>Eazy Your Grading Life owo</p>
-                    <button style={style.loginbth}>Click Here to Login</button>
+                    <GoogleLogin
+                        clientId="782461757059-f5lr975a382rf04vgnu9vde71bjcfpdv.apps.googleusercontent.com"
+                        render={renderProps => (<button style={style.loginbth} onClick={renderProps.onClick} disabled={renderProps.disabled}>Click Here to Login</button>)}
+                        onSuccess={this.responseGoogle}
+                        // onFailure={this.responseGoogle}
+                        cookiePolicy={'single_host_origin'}
+                    />
                 </div>
-                
+
                 <Button onClick={this.test}>haha</Button>
-                <GoogleLogin
-                    clientId="782461757059-f5lr975a382rf04vgnu9vde71bjcfpdv.apps.googleusercontent.com"
-                    render={renderProps => ( <button onClick={renderProps.onClick} disabled={renderProps.disabled}>Google Login</button>)}
-                    onSuccess={this.responseGoogle}
-                    // onFailure={this.responseGoogle}
-                    cookiePolicy={'single_host_origin'}
-                />
+
                 {!this.props.login && (<div>You have to login with your laurier account</div>)}
             </div>
         );
