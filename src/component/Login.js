@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { setLoginInformation, login } from '../actions';
 import LoginPic from '../image/Login.jpg';
 import D2L from '../D2L/valence';
-import { Button } from '@material-ui/core';
+import { Button, DialogContent } from '@material-ui/core';
 
 class Login extends React.Component {
 
@@ -33,7 +33,17 @@ class Login extends React.Component {
     render() {
         const style = {
             img: {
-                width: '100vw',
+                width: '90vw',
+                height: '100vh',
+                overflowY: 'hidden',
+                position: 'absolute',
+                top: '0',
+                right: '0',
+                zIndex: '-2',
+            },
+            gray:{
+                backgroundColor:'#330072',
+                width: '30vw',
                 height: '100vh',
                 overflowY: 'hidden',
                 position: 'absolute',
@@ -42,26 +52,26 @@ class Login extends React.Component {
                 zIndex: '-1',
             },
             whiteBox: {
-                width: '100vw',
+                width: '40vw',
                 position: 'absolute',
-                backgroundColor: 'rgba(255,255,255,0.3)',
+                // backgroundColor: 'rgba(255,255,255,0.3)',
                 height: '50%',
                 left: '0',
-                top: '50%',
+                top: '45%',
                 transform: 'translateY(-50%)',
                 textAlign: 'center',
             },
             title: {
-                color: 'black',
-                textTransform: 'uppercase',
-                letterSpacing: '20px',
-                fontSize: '50px',
+                color: '#eeb340',
+                textTransform: 'capitalize',
+                letterSpacing: '5px',
+                fontSize: '60px',
                 fontFamily: "'Raleway', sans-serif",
                 textAlign: 'center',
                 marginTop: '15vh',
             },
             subtitle: {
-                color: 'black',
+                color: 'white',
                 textTransform: 'uppercase',
                 letterSpacing: '10px',
                 fontSize: '20px',
@@ -70,7 +80,7 @@ class Login extends React.Component {
                 margin: '0',
             },
             loginbth: {
-                backgroundColor: 'rgba(0,0,0,0.8)',
+                backgroundColor: '#EEB340',
                 color: 'white',
                 fontSize: '17px',
                 padding: '15px 80px',
@@ -83,6 +93,7 @@ class Login extends React.Component {
         }
         return (
             <div style={style.body}>
+                <div style={style.gray}></div>
                 <img src={LoginPic} style={style.img} />
                 <div style={style.whiteBox}>
                     <p style={style.title}>My Grading Space</p>
@@ -96,9 +107,9 @@ class Login extends React.Component {
                     />
                 </div>
 
-                <Button onClick={this.test}>haha</Button>
+                {/* <Button onClick={this.test}>haha</Button> */}
 
-                {!this.props.login && (<div>You have to login with your laurier account</div>)}
+                {/* {!this.props.login && (<div>You have to login with your laurier account</div>)} */}
             </div>
         );
     }
