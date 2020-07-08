@@ -27,3 +27,11 @@ export const getJobs = () => async (dispatch) => {
         payload: response,
     });
 };
+
+export const selectJob = (id) => async (dispatch) => {
+    const response = await service.getSpecificJob(id);
+    dispatch({
+        type: 'SELECT_JOB',
+        payload: response,
+    });
+};

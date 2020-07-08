@@ -23,6 +23,7 @@ store.subscribe(() => {
         login: store.getState().login,
         compilingLanguage: store.getState().compilingLanguage,
         jobs: store.getState().jobs,
+        selectJob: store.getState().selectJob,
     });
 });
 
