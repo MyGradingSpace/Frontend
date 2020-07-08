@@ -2,7 +2,7 @@ import React from 'react';
 import GoogleLogin from 'react-google-login';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { setLoginInformation, login } from '../actions';
+import { setLoginInformation, login, getCompilingLanguage, getJobs } from '../actions';
 import LoginPic from '../image/Login.jpg';
 import D2L from '../D2L/valence';
 import { Button, DialogContent } from '@material-ui/core';
@@ -11,23 +11,15 @@ class Login extends React.Component {
 
     constructor() {
         super();
-        this.state = {
-            login: null,
-        }
+        
     }
     responseGoogle = async (response) => {
         await this.props.dispatch(setLoginInformation(response));
         if (this.props.loginInformation.Rt.Bu.includes("@mylaurier.ca")) {
-            this.setState({ login: true });
-            this.props.dispatch(login(true));
+            await this.props.dispatch(login(true));
+            await this.props.dispatch(getCompilingLanguage());
+            await this.props.dispatch(getJobs());
         }
-    }
-
-    test = () => {
-
-        const applicationContext = new this.d2l.ApplicationContext("localhost", "31brpbcCLsVim_K4jJ8vzw", "sagYSTT_HOts39qrGQTFWA");
-        // console.log(D2L.ApplicationContext.createUrlForAuthentication("http://localhost", 3000, "http://localhost:3000"));
-
     }
 
     render() {
