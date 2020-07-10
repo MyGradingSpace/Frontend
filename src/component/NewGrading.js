@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Stepper, Step, StepLabel, Select, MenuItem, TextField } from '@material-ui/core';
-import { erollments, dropbox } from '../fakeResponce';
+import { erollments, dropbox, submission } from '../fakeResponce';
 import history from '../history';
 import Box from '@material-ui/core/Box';
 import Collapse from '@material-ui/core/Collapse';
@@ -15,21 +15,23 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import axios from 'axios';
+
 
 class NewGrading extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             steps: 0,
-            selectCourse: '',
-            selectDropbox: '',
+            selectCourse: null,
+            selectDropbox: null,
             coursesList: [],
             dropboxesList: [],
             testConfig: [{
-                filename: '',
+                filename: 'wq',
                 testCases: [{
-                    input: '',
-                    output: '',
+                    input: 'wq',
+                    output: 'wq',
                     marks: 1,
                 }]
             }],
@@ -45,8 +47,85 @@ class NewGrading extends React.Component {
             history.push("/");
             window.location.reload();
         } else {
+            if (this.state.steps === 2) this.createJob();
             this.setState({ steps: this.state.steps + 1 });
         }
+    }
+
+    createJob = async () => {
+        const headers = {
+            'content-Type': 'application/json',
+            'Accept': '*/*',
+            'Cache-Control': 'no-cache',
+            'Access-Control-Allow-Headers': "*",
+        }
+        const body = {
+            professorName: "Nina",
+            professorId: "163045140",
+            course: this.state.selectCourse.OrgUnit.Name,
+            orgUnitId: this.state.selectCourse.OrgUnit.Id,
+            dropbox: this.state.selectDropbox.Name,
+            folderId: this.state.selectDropbox.Id,
+            configuration: this.state.testConfig,
+        }
+        const response = await axios.post(process.env.REACT_APP_API + '/job', body, { headers }).catch(function (error) {
+            console.log(error);
+        });
+        this.createGrading(response.data);
+    }
+
+    createGrading = async (data) => {
+        const headers = {
+            'content-Type': 'application/json',
+            'Accept': '*/*',
+            'Cache-Control': 'no-cache',
+            'Access-Control-Allow-Headers': "*",
+        }
+        const grading = [];
+        submission.map(sub => {
+            let fileName1, fileId1;
+            if (sub.Submissions.length === 0) {
+                fileName1 = null;
+                fileId1 = null;
+            } else {
+                const item = sub.Submissions[sub.Submissions.length - 1];
+                fileName1 = item.Files.FileName;
+                fileId1 = item.Files.FileId;
+            }
+            const item = {
+                DisplayName: sub.Entity.DisplayName,
+                EntityId: sub.Entity.EntityId,
+                FileName: fileName1,
+                fileId: fileId1,
+                markingResults: this.state.testConfig,
+            }
+            grading.push(item);
+        })
+        const body = {
+            jobId: data._id,
+            grading: grading,
+        }
+        const response = await axios.post(process.env.REACT_APP_API + '/grading', body, { headers }).catch(function (error) {
+            console.log(error);
+        });
+        this.updateCounts(grading.length, data._id);
+    }
+
+    updateCounts = async (count, jobId) => {
+        const headers = {
+            'content-Type': 'application/json',
+            'Accept': '*/*',
+            'Cache-Control': 'no-cache',
+            'Access-Control-Allow-Headers': "*",
+        }
+        const body = {
+            gradingCounts: 0,
+            submissionCounts: count,
+        }
+        const response = await axios.put(process.env.REACT_APP_API + `/job?_id=${jobId}`, body, { headers }).catch(function (error) {
+            console.log(error);
+        });
+        console.log(response)
     }
 
     componentDidMount() {
@@ -216,7 +295,7 @@ class NewGrading extends React.Component {
                                 </Select>
                                 <br />
                                 <div style={{ display: 'inline', marginRight: '20px' }}>Select Dropbox: </div>
-                                <Select onChange={(e) => { this.setState({ selectDropbox: e.target.value }) }} style={{ width: '100%', marginBottom: '30px' }}>
+                                <Select onChange={(e) => { this.setState({ selectDropbox: e.target.value }); }} style={{ width: '100%', marginBottom: '30px' }}>
                                     {this.state.dropboxesList.map(item => (<MenuItem value={item}>{item['Name']}</MenuItem>))}
                                 </Select>
                             </div>)}
@@ -256,7 +335,7 @@ class NewGrading extends React.Component {
 
                         {this.state.steps === 2 && (
                             <div>
-                                <div style={{ marginBottom: '10px' }}> Creat a new assignment grading for <b>{this.state.selectCourse}</b> - <b>{this.state.selectDropbox}</b></div>
+                                <div style={{ marginBottom: '10px' }}> Creat a new assignment grading for <b>{this.state.selectCourse.OrgUnit.Name}</b> - <b>{this.state.selectDropbox.Name}</b></div>
                                 {this.state.testConfig.map((test, index) => (
                                     <>
                                         <div> Test {index + 1}:</div>
