@@ -20,8 +20,8 @@ export const getCompilingLanguage = () => async (dispatch) => {
     });
 };
 
-export const getJobs = () => async (dispatch) => {
-    const response = await service.getJobs();
+export const getJobs = (professorId) => async (dispatch) => {
+    const response = await service.getJobs(professorId);
     dispatch({
         type: 'JOBS',
         payload: response,
@@ -29,7 +29,7 @@ export const getJobs = () => async (dispatch) => {
 };
 
 export const selectJob = (id) => async (dispatch) => {
-    const response = await service.getSpecificJob(id);
+    const response = await service.getGrading(id);
     dispatch({
         type: 'SELECT_JOB',
         payload: response,

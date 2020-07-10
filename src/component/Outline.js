@@ -37,9 +37,9 @@ class Outline extends React.Component {
         const unpublishedJobs = [];
 
         this.props.jobs.map(job => {
-            if (job.submissionCounts === job.gradingCounts) {
+            if (job.submissionCounts === job.gradingCounts && job.submissionCounts != 0) {
                 unpublishedJobs.push(job);
-            } else {
+            } else if (job.submissionCounts != job.gradingCounts && job.submissionCounts != 0){
                 gradingJobs.push(job);
             }
         });
