@@ -1,5 +1,5 @@
 import React from 'react';
-import Table from './Table'
+import TablePage from './TablePage'
 import { Button } from '@material-ui/core'
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -45,7 +45,7 @@ class GradingStatus extends React.Component {
                 <div style={style.title}>Course:</div> <a>{this.state.job ? this.state.job.course:""}</a>
                 <div style={style.title}>Dropbox:</div> <a>{this.state.job ? this.state.job.dropbox :""}</a>
                 <div style={style.title}>Grading Status:</div> <a>{this.state.job ? this.state.job.gradingCounts :""}/{this.state.job ? this.state.job.submissionCounts :""}</a>
-                <Table />
+                <TablePage />
                 <Button style={style.btn}>Publish this assignment</Button>
             </div>
         );
