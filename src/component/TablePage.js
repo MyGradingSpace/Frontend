@@ -85,7 +85,7 @@ function Row(props) {
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                <TableCell > {row.displayName} </TableCell>
+                <TableCell >{row.displayName}</TableCell>
                 <TableCell >{row.correct}</TableCell>
                 <TableCell >{row.total}</TableCell>
                 <TableCell >{row.marks}</TableCell>

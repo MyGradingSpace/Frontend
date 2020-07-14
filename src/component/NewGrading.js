@@ -97,21 +97,45 @@ class NewGrading extends React.Component {
                 EntityId: sub.Entity.EntityId,
                 FileName: fileName1,
                 fileId: fileId1,
-                markingResults: this.state.testConfig,
+                markingResults: this.configToResult(this.state.testConfig),
             }
             grading.push(item);
         })
         const body = {
             jobId: data._id,
             grading: grading,
+            gradingId: data.gradingId,
         }
+        console.log(body);
         const response = await axios.post(process.env.REACT_APP_API + '/grading', body, { headers }).catch(function (error) {
             console.log(error);
         });
-        this.updateCounts(grading.length, data._id);
+        this.updateCounts(grading.length, data._id, data.gradingId);
     }
 
-    updateCounts = async (count, jobId) => {
+    configToResult = () => {
+        let markingResult = [];
+        this.state.testConfig.map(test => {
+            let result = [];
+            test.testCases.map(item => {
+                const thing = {
+                    output: '',
+                    expectOutput: item.output,
+                    marks: item.marks,
+                }
+                result.push(thing);
+            });
+            const item = {
+                filename: test.filename,
+                marked: false,
+                testResult: result,
+            }
+            markingResult.push(item);
+        });
+        return markingResult;
+    }
+
+    updateCounts = async (count, jobId, gradingId) => {
         const headers = {
             'content-Type': 'application/json',
             'Accept': '*/*',
@@ -119,13 +143,13 @@ class NewGrading extends React.Component {
             'Access-Control-Allow-Headers': "*",
         }
         const body = {
+            gradingId: gradingId,
             gradingCounts: 0,
             submissionCounts: count,
         }
         const response = await axios.put(process.env.REACT_APP_API + `/job?_id=${jobId}`, body, { headers }).catch(function (error) {
             console.log(error);
         });
-        console.log(response)
     }
 
     componentDidMount() {
@@ -272,8 +296,6 @@ class NewGrading extends React.Component {
             btnGroup: {
 
             },
-
-
         }
         const stepInstruction = ['Select Course and Dropbox', 'Update Test and Answer Files', 'Veiw All'];
         return (
