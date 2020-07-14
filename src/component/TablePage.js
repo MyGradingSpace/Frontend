@@ -19,33 +19,58 @@ class TablePage extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            rows: [],
+        }
     }
 
-    createData = (displayName, correct, total, marks, fullMarks, details) => {
-        return {
-            displayName,
-            correct,
-            total,
-            marks,
-            fullMarks,
-            details: [
-                { case: 'case1', output: 'ABCBA', expectOutput: 'ABCBA', result: 'correct' },
-                { case: 'case2', output: '10', expectOutput: '12', result: 'incorrect' },
-                { case: 'case3', output: 'string', expectOutput: 'string', result: 'correct' },
-                { case: 'case4', output: 'ABCBA', expectOutput: 'ABCBA', result: 'correct' },
-                { case: 'case5', output: 'ABCBA', expectOutput: 'ABCBA', result: 'correct' },
-            ],
+    componentDidMount = async () => {
+        const grading = this.props.selectJob.grading;
+        let rows = [];
+        await grading.map(async (item) => {
+            const row = await this.createData(item.DisplayName, item.markingResults);
+            rows.push(row);
+        });
+        this.setState({ rows: rows });
+    }
+
+    createData = async (displayName, details) => {
+        const List = [];
+        let i = 1;
+        let correct = 0;
+        let marks = 0;
+        let fullMarks = 0;
+        details.map(detail => {
+            detail.testResult.map(item => {
+                const thing = {
+                    fileName: detail.filename,
+                    case: `case${i}`,
+                    output: item.output,
+                    expectOutput: item.expectOutput,
+                    result: item.output === item.expectOutput ? 'correct' : 'incorrect',
+                }
+                List.push(thing);
+                if (thing.result === 'correct') {
+                    correct += 1;
+                    marks += item.marks;
+                }
+                i += 1;
+                fullMarks += item.marks;
+            });
+        });
+        const re = {
+            displayName: displayName,
+            correct: correct,
+            total: i - 1,
+            marks: marks,
+            fullMarks: fullMarks,
+            details: List,
         };
+        return re;
     }
 
     render() {
-        const grading = this.props.selectJob.grading;
-        console.log(grading);
-        const rows = [];
-        grading.map(item => {
-            const row = this.createData(item.DisplayName, 5, 10, 10, 20, item.markingResults);
-            rows.push(row);
-        });
+
         return (
             <>
                 <TableContainer component={Paper}>
@@ -61,14 +86,13 @@ class TablePage extends React.Component {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.map((row) => (
+                            {this.state.rows.map((row) => (
                                 <Row key={row.name} row={row} />
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
             </>
-
         );
     }
 }
@@ -99,6 +123,7 @@ function Row(props) {
                             <Table size="small">
                                 <TableHead>
                                     <TableRow>
+                                        <TableCell>File Name</TableCell>
                                         <TableCell>Case Number</TableCell>
                                         <TableCell>Output</TableCell>
                                         <TableCell>Expect output</TableCell>
@@ -108,6 +133,7 @@ function Row(props) {
                                 <TableBody>
                                     {row.details.map((detail) => (
                                         <TableRow key={detail.case}>
+                                            <TableCell >{detail.fileName}</TableCell>
                                             <TableCell >{detail.case}</TableCell>
                                             <TableCell >{detail.output}</TableCell>
                                             <TableCell >{detail.expectOutput}</TableCell>

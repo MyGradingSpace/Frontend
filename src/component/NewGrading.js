@@ -106,7 +106,6 @@ class NewGrading extends React.Component {
             grading: grading,
             gradingId: data.gradingId,
         }
-        console.log(body);
         const response = await axios.post(process.env.REACT_APP_API + '/grading', body, { headers }).catch(function (error) {
             console.log(error);
         });
