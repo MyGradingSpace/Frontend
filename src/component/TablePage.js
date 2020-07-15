@@ -25,10 +25,10 @@ class TablePage extends React.Component {
     }
 
     componentDidMount = async () => {
-        const grading = this.props.selectJob.grading;
+        const grading = this.props.selectJob.objects;
         let rows = [];
         await grading.map(async (item) => {
-            const row = await this.createData(item.DisplayName, item.markingResults);
+            const row = await this.createData(item.DisplayName, item.markings);
             rows.push(row);
         });
         this.setState({ rows: rows });

@@ -2,21 +2,12 @@ import React from 'react';
 import { Button, Stepper, Step, StepLabel, Select, MenuItem, TextField } from '@material-ui/core';
 import { erollments, dropbox, submission } from '../fakeResponce';
 import history from '../history';
-import Box from '@material-ui/core/Box';
-import Collapse from '@material-ui/core/Collapse';
-import IconButton from '@material-ui/core/IconButton';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import axios from 'axios';
-
+import { connect } from 'react-redux';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@material-ui/core/Dialog';
 
 class NewGrading extends React.Component {
     constructor(props) {
@@ -25,16 +16,21 @@ class NewGrading extends React.Component {
             steps: 0,
             selectCourse: null,
             selectDropbox: null,
+            selectLanguage: null,
             coursesList: [],
             dropboxesList: [],
             testConfig: [{
-                filename: 'wq',
+                filename: '',
                 testCases: [{
-                    input: 'wq',
-                    output: 'wq',
+                    input: '',
+                    output: '',
                     marks: 1,
                 }]
             }],
+            step0error: false,
+            step1error: false,
+            step2error: false,
+            step3error: null,
         }
     }
 
@@ -43,12 +39,32 @@ class NewGrading extends React.Component {
     }
 
     handleNext = () => {
-        if (this.state.steps === 3) {
+        if (this.state.steps === 0) {
+            if (!this.state.selectCourse || !this.state.selectDropbox || !this.state.selectLanguage) {
+                this.setState({ step0error: true });
+            } else {
+                this.setState({ step0error: false });
+                this.setState({ steps: this.state.steps + 1 });
+            }
+        }
+        else if (this.state.steps === 1) {
+            for (let i = 0; i < this.state.testConfig.length; i++) {
+                if (this.state.testConfig[i].filename === "") {
+                    this.setState({ step1error: true });
+                    return;
+                }
+            }
+            this.setState({ step1error: false });
+            this.setState({ steps: this.state.steps + 1 });
+
+        }
+        else if (this.state.steps === 2) {
+            this.createJob();
+            this.setState({ steps: this.state.steps + 1 });
+        }
+        else if (this.state.steps === 3) {
             history.push("/");
             window.location.reload();
-        } else {
-            if (this.state.steps === 2) this.createJob();
-            this.setState({ steps: this.state.steps + 1 });
         }
     }
 
@@ -63,6 +79,7 @@ class NewGrading extends React.Component {
             professorName: "Nina",
             professorId: "163045140",
             course: this.state.selectCourse.OrgUnit.Name,
+            languageId: this.state.selectLanguage._id,
             orgUnitId: this.state.selectCourse.OrgUnit.Id,
             dropbox: this.state.selectDropbox.Name,
             folderId: this.state.selectDropbox.Id,
@@ -70,8 +87,13 @@ class NewGrading extends React.Component {
         }
         const response = await axios.post(process.env.REACT_APP_API + '/job', body, { headers }).catch(function (error) {
             console.log(error);
+            return 400;
         });
-        this.createGrading(response.data);
+        if (response === 400) {
+            this.setState({ step3error: true });
+        } else {
+            this.createGrading(response.data);
+        }
     }
 
     createGrading = async (data) => {
@@ -97,19 +119,29 @@ class NewGrading extends React.Component {
                 EntityId: sub.Entity.EntityId,
                 FileName: fileName1,
                 fileId: fileId1,
-                markingResults: this.configToResult(this.state.testConfig),
+                markings: this.configToResult(this.state.testConfig),
             }
             grading.push(item);
         })
         const body = {
             jobId: data._id,
-            grading: grading,
+            credential: {
+                SessionId: "test",
+                SessionKey: "test",
+                SessionSkew: "test"
+            },
+            objects: grading,
             gradingId: data.gradingId,
         }
         const response = await axios.post(process.env.REACT_APP_API + '/grading', body, { headers }).catch(function (error) {
             console.log(error);
+            return 400;
         });
-        this.updateCounts(grading.length, data._id, data.gradingId);
+        if (response === 400) {
+            this.setState({ step3error: true });
+        } else {
+            this.updateCounts(grading.length, data._id, data.gradingId);
+        }
     }
 
     configToResult = () => {
@@ -148,7 +180,13 @@ class NewGrading extends React.Component {
         }
         const response = await axios.put(process.env.REACT_APP_API + `/job?_id=${jobId}`, body, { headers }).catch(function (error) {
             console.log(error);
+            return 400;
         });
+        if (response === 400) {
+            this.setState({ step3error: true });
+        } else {
+            this.setState({ step3error: false });
+        }
     }
 
     componentDidMount() {
@@ -311,7 +349,12 @@ class NewGrading extends React.Component {
                         {this.state.steps === 0 && (
                             <div>
                                 <div style={{ display: 'inline', marginRight: '20px', marginBottom: '30px' }}>Select Course: </div>
-                                <Select onChange={(e) => { this.setState({ selectCourse: e.target.value }); this.getDropBoxs(e.target.value['OrgUnit']['Id']); }} style={{ width: '100%', marginBottom: '30px' }}>
+                                <Select
+                                    onChange={(e) => {
+                                        this.setState({ selectCourse: e.target.value });
+                                        this.getDropBoxs(e.target.value['OrgUnit']['Id']);
+                                    }}
+                                    style={{ width: '100%', marginBottom: '30px' }}>
                                     {this.state.coursesList.map(item => (<MenuItem value={item}>{item['OrgUnit']['Name']}</MenuItem>))}
                                 </Select>
                                 <br />
@@ -319,6 +362,11 @@ class NewGrading extends React.Component {
                                 <Select onChange={(e) => { this.setState({ selectDropbox: e.target.value }); }} style={{ width: '100%', marginBottom: '30px' }}>
                                     {this.state.dropboxesList.map(item => (<MenuItem value={item}>{item['Name']}</MenuItem>))}
                                 </Select>
+                                <div style={{ display: 'inline', marginRight: '20px' }}>Select Compiling Language: </div>
+                                <Select onChange={(e) => { this.setState({ selectLanguage: e.target.value }); }} style={{ width: '100%', marginBottom: '30px' }}>
+                                    {this.props.compilingLanguage.map(item => (<MenuItem value={item}>{item.name}</MenuItem>))}
+                                </Select>
+                                {this.state.step0error && (<div style={{ color: 'red', marginBottom: '10px' }}> Please select course and dropbox!</div>)}
                             </div>)}
 
                         {this.state.steps === 1 && (
@@ -352,11 +400,14 @@ class NewGrading extends React.Component {
                                     </div>
                                 ))}
                                 <button onClick={this.addTest}>add test</button>
+                                {this.state.step1error && (<div style={{ color: 'red', marginBottom: '10px' }}> At lease one of the testing file name is empty!</div>)}
                             </div>)}
 
                         {this.state.steps === 2 && (
                             <div>
                                 <div style={{ marginBottom: '10px' }}> Creat a new assignment grading for <b>{this.state.selectCourse.OrgUnit.Name}</b> - <b>{this.state.selectDropbox.Name}</b></div>
+                                <div style={{ marginBottom: '10px' }}> Compiling Language: <b>{this.state.selectLanguage.name}</b></div>
+                                <div style={{ marginBottom: '10px' }}> Language Version: <b>{this.state.selectLanguage.version}</b></div>
                                 {this.state.testConfig.map((test, index) => (
                                     <>
                                         <div> Test {index + 1}:</div>
@@ -383,8 +434,8 @@ class NewGrading extends React.Component {
 
                         {this.state.steps === 3 && (
                             <div>
-                                <div style={{ marginBottom: '10px' }}> You All Set!</div>
-                                <div> Start Grading Now ... </div>
+                                <div style={{ marginBottom: '10px' }}> Creating Grading Now.</div>
+                                <div> Please Wait... </div>
                             </div>)}
 
                         <div style={style.btnGroup}>
@@ -395,10 +446,24 @@ class NewGrading extends React.Component {
                                 {this.state.steps === stepInstruction.length && 'Close'}
                             </Button>
                         </div>
+                        <Dialog open={this.state.step3error}>
+                            <DialogTitle>Oops! Something went wrong.</DialogTitle>
+                            <div>Failed at creating grading assginment, Please try it later!. </div>
+                            <Button color="primary" variant="contained" onClick={() => { this.setState({ step3error: null }); }}>Ok</Button>
+                        </Dialog>
+                        <Dialog open={this.state.step3error === false}>
+                            <DialogTitle>Grading assginment created!</DialogTitle>
+                            <div>Our machine will start marking this assginment, you could go back to Home page to see the progress. </div>
+                            <Button color="primary" variant="contained" onClick={() => { this.setState({ step3error: null }); }}>Ok</Button>
+                        </Dialog>
                     </div>
                 </div>
             </>);
     }
 }
 
-export default NewGrading;
+const mapStateToProps = (state) => ({
+    compilingLanguage: state.compilingLanguage,
+});
+
+export default connect(mapStateToProps)(NewGrading);

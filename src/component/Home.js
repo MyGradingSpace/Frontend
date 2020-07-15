@@ -47,7 +47,7 @@ class Home extends React.Component {
                                 <div>DropBox: <b>{job.dropbox}</b></div>
                                 <div>Grading: <b>{job.gradingCounts}/{job.submissionCounts}</b></div>
                             </div>
-                            <Button style={{ backgroundColor: '#330072', color: 'white', fontSize: '14px', marginTop: '20px', marginBottom: '30px' }} onClick={() => this.toGradingPage(job._id)}>View Grading Result</Button>
+                            <Button disabled={job.submissionCounts === 0} style={{ backgroundColor: '#330072', color: 'white', fontSize: '14px', marginTop: '20px', marginBottom: '30px' }} onClick={() => this.toGradingPage(job._id)}>View Grading Result</Button>
                         </div>
                     ))}
                 </div>
