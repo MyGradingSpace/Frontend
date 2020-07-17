@@ -1,3 +1,4 @@
+import jsSHA from 'jssha';
 /*
  * D2LValence package, js api.
  *
@@ -41,19 +42,19 @@ var D2L = D2L || {};
 D2L.Auth = {
 
 	// Application auth parameters
-	APP_AUTH_ID_PARAM : 'x_a',
-	APP_AUTH_KEY_PARAM : 'x_b',
-	CALLBACK_PARAM : 'x_target',
+	APP_AUTH_ID_PARAM: 'x_a',
+	APP_AUTH_KEY_PARAM: 'x_b',
+	CALLBACK_PARAM: 'x_target',
 
 	// Operation parameters
-	APP_ID_PARAM : 'x_a',
-	TOKEN_ID_PARAM : 'x_b',
-	SIGNED_APP_PARAM : 'x_c',
-	SIGNED_TOKEN_PARAM : 'x_d',
+	APP_ID_PARAM: 'x_a',
+	TOKEN_ID_PARAM: 'x_b',
+	SIGNED_APP_PARAM: 'x_c',
+	SIGNED_TOKEN_PARAM: 'x_d',
 
-	TIMESTAMP_PARAM : 'x_t',
+	TIMESTAMP_PARAM: 'x_t',
 
-	AUTH_URL : '/d2l/auth/api/token',
+	AUTH_URL: '/d2l/auth/api/token',
 
 	/**
 	 * Determine if an URL is decorated with an application context.
@@ -62,7 +63,7 @@ D2L.Auth = {
 	 *
 	 * @return {Boolean} True if URL has an embedded app ID paramter; otherwise, false.
 	 */
-	isAuthenticated : function (url) {
+	isAuthenticated: function (url) {
 		return D2L.Util.parseFromUrl(D2L.Auth.APP_ID_PARAM, url) !== '';
 	}
 
@@ -92,7 +93,7 @@ D2L.Util = {
 	 *
 	 * @this {D2L.Util}
 	 */
-	getTokenUrl : function (host, path, port, parameters) {
+	getTokenUrl: function (host, path, port, parameters) {
 		var targetUrl = host;
 		if ((host.indexOf('https://') === 0 && port !== 443) || (host.indexOf('http://') === 0 && port !== 80)) {
 			targetUrl += ':' + port;
@@ -120,7 +121,7 @@ D2L.Util = {
 	 *
 	 * @this {D2L.Util}
 	 */
-	parseFromUrl : function (name, url) {
+	parseFromUrl: function (name, url) {
 		// escape name to be used in a regex
 		name = name.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1');
 
@@ -134,12 +135,12 @@ D2L.Util = {
 	},
 
 	// Helper to ensure an URL is safe-encoded
-	encodeURL : function (url) {
+	encodeURL: function (url) {
 		return encodeURIComponent(url);
 	},
 
 	// b64-for-Valence helper used by D2L.Util.Sign()
-	base64Url : function (b64) {
+	base64Url: function (b64) {
 		return b64
 			.replace(/\+/gi, '-')
 			.replace(/\//gi, '_')
@@ -165,7 +166,7 @@ D2L.Util = {
 	 *
 	 * @this {D2L.Util}
 	 */
-	Sign : function (data, key) {
+	Sign: function (data, key) {
 		var hmacObj = new jsSHA(data, 'ASCII'),
 			hmac = hmacObj.getHMAC(key, 'ASCII', 'SHA-256', 'B64');
 
@@ -174,12 +175,12 @@ D2L.Util = {
 
 	// Helper to retrieve a Valence-compatible timestamp from the local system
 	// Format should be a Unix-style timestamp, UTC timezone, expressed in seconds.
-	getTimestamp : function () {
+	getTimestamp: function () {
 		return Math.round(Date.now() / 1000);
 	},
 
 	// Calculates skew given the body of a 403 response
-	calculateSkew : function (response) {
+	calculateSkew: function (response) {
 		var matches = /^Timestamp out of range\s*([0-9]+)/.exec(response);
 		if (matches === null || matches.length !== 2) {
 			return 0;
@@ -266,12 +267,12 @@ D2L.ApplicationContext.prototype.createUrlForAuthentication =
 D2L.ApplicationContext.prototype.createUserContext =
 	function (host, port, url, skew) {
 		return new D2L.UserContext({
-			'host' : host,
-			'port' : port,
-			'userId' : D2L.Util.parseFromUrl(D2L.Auth.APP_ID_PARAM, url),
-			'userKey' : D2L.Util.parseFromUrl(D2L.Auth.TOKEN_ID_PARAM, url),
-			'appId' : this.appId,
-			'appKey' : this.appKey,
+			'host': host,
+			'port': port,
+			'userId': D2L.Util.parseFromUrl(D2L.Auth.APP_ID_PARAM, url),
+			'userKey': D2L.Util.parseFromUrl(D2L.Auth.TOKEN_ID_PARAM, url),
+			'appId': this.appId,
+			'appKey': this.appKey,
 			'skew': skew || 0
 		});
 	};
@@ -294,12 +295,12 @@ D2L.ApplicationContext.prototype.createUserContext =
 D2L.ApplicationContext.prototype.createUserContextWithValues =
 	function (host, port, userId, userKey, skew) {
 		return new D2L.UserContext({
-			'host' : host,
-			'port' : port,
-			'userId' : userId,
-			'userKey' : userKey,
-			'appId' : this.appId,
-			'appKey' : this.appKey,
+			'host': host,
+			'port': port,
+			'userId': userId,
+			'userKey': userKey,
+			'appId': this.appId,
+			'appKey': this.appKey,
 			'skew': skew || 0
 		});
 
@@ -371,20 +372,21 @@ D2L.UserContext.prototype.createAuthenticatedUrl =
 D2L.UserContext.prototype.createUrlForAuthentication = D2L.UserContext.prototype.createAuthenticatedUrl; // For backwards compatability
 
 // istanbul ignore else
-if (typeof window === 'undefined') { // node.js
-	// jshint node: true
-	var crypto = require('crypto');
-	var jsSHA = function (data) {
-		this.data = data;
-	};
-	jsSHA.prototype.getHMAC = function (key) {
-		var hash = crypto.createHmac('sha256', key);
-		hash.update(this.data);
-		return hash.digest('base64');
-	};
+// if (typeof window === 'undefined') { // node.js
+// 	// jshint node: true
+// 	var crypto = require('crypto');
+// 	var jsSHA = function (data) {
+// 		this.data = data;
+// 	};
+// 	jsSHA.prototype.getHMAC = function (key) {
+// 		var hash = crypto.createHmac('sha256', key);
+// 		hash.update(this.data);
+// 		return hash.digest('base64');
+// 	};
 
-	Object.keys(D2L).forEach(function (x) {
-		exports[x] = D2L[x];
-	});
-}
+// 	Object.keys(D2L).forEach(function (x) {
+// 		exports[x] = D2L[x];
+// 	});
+// }
 
+export default D2L;

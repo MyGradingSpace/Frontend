@@ -393,7 +393,7 @@ class NewGrading extends React.Component {
                                                     </div>
                                                 </div>
                                                 <div style={{ marginTop: '15px', display: 'inline-block' }}>Marks Worth:</div>
-                                                <TextField value={item.marks} style={{ marginTop: '10px', marginLeft: '20px', textAlign: 'center' }} type='number' onChange={(e) => this.marksOnchange(index, i, e.target.value.t)} />
+                                                <TextField value={item.marks} style={{ marginTop: '10px', marginLeft: '20px', textAlign: 'center' }} type='number' onChange={(e) => this.marksOnchange(index, i, parseInt(e.target.value))} />
                                             </div>
                                         ))}
                                         <button onClick={() => this.addCase(index)}>add case</button>
