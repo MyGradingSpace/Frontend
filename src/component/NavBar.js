@@ -3,9 +3,35 @@ import LaurierLogo from '../image/Laurier-logo.png';
 import logo from '../image/logo.PNG';
 import { Avatar } from '@material-ui/core';
 import history from '../history';
-
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import D2L from '../D2L/valence';
+import axios from 'axios';
 
 class NavBar extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            initial: '',
+            name: '',
+        }
+    }
+
+    test = async () => {
+        const D2LAppContext = new D2L.ApplicationContext(process.env.REACT_APP_APP_ID, process.env.REACT_APP_APP_KEY);
+        const D2LUserContext = D2LAppContext.createUserContextWithValues(process.env.REACT_APP_HOST_URL, 443, "lSj3-aOMLSfTGJcUkossnd", "_qWFeksnL-HqmHs2WXjaoD");
+        const URL = D2LUserContext.createAuthenticatedUrl("/d2l/api/le/1.10/219419/dropbox/folders/54721/submissions/", "get");
+        const data = (await axios.get(URL)).data;
+        console.log(data);
+    }
+
+    componentDidMount = async () => {
+        const name = this.props.user.FirstName + ' ' + this.props.user.LastName;
+        const initial = this.props.user.FirstName[0] + this.props.user.LastName[0];
+        await this.setState({ name: name });
+        await this.setState({ initial: initial });
+    }
 
     render() {
         const style = {
@@ -61,14 +87,14 @@ class NavBar extends React.Component {
                         <img style={style.laurierLogo} src={LaurierLogo} alt='Laurier-Logo' />
                         <img style={style.logo} src={logo} alt='Logo' />
                         <div style={style.nameBar}>
-                            <Avatar variant="rounded" style={style.avatar}> NY </Avatar>
-                            <div style={style.name}> Nina Yang</div>
+                            <Avatar variant="rounded" style={style.avatar}> {this.state.initial} </Avatar>
+                            <div style={style.name}> {this.state.name}</div>
                         </div>
                     </div>
                 </div>
                 <div style={style.smallBar}>
                     <a onClick={() => { history.push("/"); window.location.reload() }}>Home{' '}</a>
-                    <a>{' '} Help {' '}</a>
+                    <a onClick={this.test}>{' '} Help {' '}</a>
                     <a onClick={() => { localStorage.clear(); window.location.reload() }}>{' '} Logout</a>
                 </div>
             </>
@@ -76,4 +102,12 @@ class NavBar extends React.Component {
     }
 }
 
-export default NavBar;
+NavBar.propTypes = {
+};
+
+const mapStateToProps = (state) => ({
+    userContext: state.userContext,
+    user: state.user,
+});
+
+export default connect(mapStateToProps)(NavBar);

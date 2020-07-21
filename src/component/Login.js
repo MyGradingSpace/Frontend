@@ -2,16 +2,10 @@ import React from 'react';
 import GoogleLogin from 'react-google-login';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { setLoginInformation, login } from '../actions';
+import { setLoginInformation, login, createUserContext, createUserInfo } from '../actions';
 import LoginPic from '../image/Login.jpg';
 import { Button, DialogContent } from '@material-ui/core';
-
-
-// import { ApplicationContext, UserContext } from '../D2L/valence';
 import D2L from '../D2L/valence';
-// import D2L from 'valence';
-
-// var D2L = require('valence');
 
 class Login extends React.Component {
 
@@ -29,8 +23,8 @@ class Login extends React.Component {
     test = async () => {
         const D2LAppContext = new D2L.ApplicationContext(process.env.REACT_APP_APP_ID, process.env.REACT_APP_APP_KEY);
         const loginUrl = D2LAppContext.createUrlForAuthentication(process.env.REACT_APP_HOST_URL, 443, process.env.REACT_APP_REDIRECT_URL);
-        window.close();
         window.open(loginUrl);
+        window.close();
         let url = window.location.href;
         const redirectUrl = url.split("?x_a=")[0];
         url = url.split("?x_a=")[1]
@@ -40,9 +34,10 @@ class Login extends React.Component {
         const xC = url.split("&x_c=")[1];
         if(redirectUrl === process.env.REACT_APP_REDIRECT_URL){
             await this.props.dispatch(login(true));
+            await this.props.dispatch(createUserContext(xA, xB, xC));
+            await this.props.dispatch(createUserInfo(xA, xB));
         }
-        // const D2LUserContext = D2LAppContext.createUserContextWithValues("https://" + `wlutest.desire2learn.com`, 443, "lSj3-aOMLSfTGJcUkossnd", "_qWFeksnL-HqmHs2WXjaoD");
-        // console.log(D2LUserContext.createAuthenticatedUrl("/d2l/api/lp/1.0/users/whoami", "get"));
+        window.location.reload();  
     }
 
     render() {
@@ -114,13 +109,6 @@ class Login extends React.Component {
                     <p style={style.title}>My Grading Space</p>
                     <p style={style.subtitle}>Eazy Your Grading Life owo</p>
                     <button style={style.loginbth} onClick={this.test}>Click Here to Login</button>
-                    {/* <GoogleLogin
-                        clientId="782461757059-f5lr975a382rf04vgnu9vde71bjcfpdv.apps.googleusercontent.com"
-                        render={renderProps => ()}
-                        onSuccess={this.responseGoogle}
-                        // onFailure={this.responseGoogle}
-                        cookiePolicy={'single_host_origin'}
-                    /> */}
                 </div>
             </div>
         );
@@ -131,11 +119,13 @@ class Login extends React.Component {
 Login.propTypes = {
     dispatch: PropTypes.func.isRequired,
     setLoginInformation: PropTypes.func.isRequired,
+    userContextReducer: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     loginInformation: state.loginInformation,
     login: state.login,
+    userContext: state.userContext,
 });
 
 export default connect(mapStateToProps)(Login);

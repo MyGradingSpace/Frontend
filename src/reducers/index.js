@@ -4,6 +4,8 @@ import loginReducer from './loginReducer';
 import compilingLanguageReducer from './compilingLanguageReducer';
 import jobReducer from './jobReducer';
 import selectJobReducer from './selectJobReducer';
+import userContextReducer from './userContextReducer';
+import userReducer from './userReducer';
 
 export default combineReducers({
     loginInformation: loginInformationReducer,
@@ -11,4 +13,6 @@ export default combineReducers({
     compilingLanguage: compilingLanguageReducer,
     jobs: jobReducer,
     selectJob: selectJobReducer,
+    userContext: userContextReducer,
+    user: userReducer,
 });

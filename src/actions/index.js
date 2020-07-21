@@ -1,4 +1,6 @@
 import Service from '../service/serviec';
+import D2L from '../D2L/valence';
+import axios from 'axios';
 
 const service = new Service();
 
@@ -33,5 +35,22 @@ export const selectJob = (id) => async (dispatch) => {
     dispatch({
         type: 'SELECT_JOB',
         payload: response,
+    });
+};
+
+export const createUserContext = (xA, xB, xC) => ({
+    type: 'USER_CONTEXT',
+    payload: { xA: xA, xB: xB, xC: xC },
+
+});
+
+export const createUserInfo = (xA, xB) => async (dispatch) => {
+    const D2LAppContext = new D2L.ApplicationContext(process.env.REACT_APP_APP_ID, process.env.REACT_APP_APP_KEY);
+    const D2LUserContext = D2LAppContext.createUserContextWithValues(process.env.REACT_APP_HOST_URL, 443, xA, xB);
+    const URL = D2LUserContext.createAuthenticatedUrl("/d2l/api/lp/1.0/users/whoami", "get");
+    const data = (await axios.get(URL)).data;
+    dispatch({
+        type: 'USER_INFO',
+        payload: data,
     });
 };

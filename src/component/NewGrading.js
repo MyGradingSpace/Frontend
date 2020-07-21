@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Stepper, Step, StepLabel, Select, MenuItem, TextField } from '@material-ui/core';
-import { erollments, dropbox, submission } from '../fakeResponce';
+import { submission } from '../fakeResponce';
 import history from '../history';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
@@ -8,6 +8,7 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
+import D2L from '../D2L/valence';
 
 class NewGrading extends React.Component {
     constructor(props) {
@@ -92,17 +93,15 @@ class NewGrading extends React.Component {
         if (response === 400) {
             this.setState({ step3error: true });
         } else {
-            this.createGrading(response.data);
+            this.createGrading(body.orgUnitId, body.folderId, response.data);
         }
     }
 
-    createGrading = async (data) => {
-        const headers = {
-            'content-Type': 'application/json',
-            'Accept': '*/*',
-            'Cache-Control': 'no-cache',
-            'Access-Control-Allow-Headers': "*",
-        }
+    createGrading = async (orgUnitId, folderId, data) => {
+        const D2LAppContext = new D2L.ApplicationContext(process.env.REACT_APP_APP_ID, process.env.REACT_APP_APP_KEY);
+        const D2LUserContext = D2LAppContext.createUserContextWithValues(process.env.REACT_APP_HOST_URL, 443, "lSj3-aOMLSfTGJcUkossnd", "_qWFeksnL-HqmHs2WXjaoD");
+        const URL = D2LUserContext.createAuthenticatedUrl(`/d2l/api/le/1.10/${orgUnitId}/dropbox/folders/${folderId}/submissions/`, "get");
+        const submission = (await axios.get(URL)).data;
         const grading = [];
         submission.map(sub => {
             let fileName1, fileId1;
@@ -132,6 +131,12 @@ class NewGrading extends React.Component {
             },
             objects: grading,
             gradingId: data.gradingId,
+        }
+        const headers = {
+            'content-Type': 'application/json',
+            'Accept': '*/*',
+            'Cache-Control': 'no-cache',
+            'Access-Control-Allow-Headers': "*",
         }
         const response = await axios.post(process.env.REACT_APP_API + '/grading', body, { headers }).catch(function (error) {
             console.log(error);
@@ -194,49 +199,27 @@ class NewGrading extends React.Component {
     }
 
     getCourses = async () => {
-        // const headers = {
-        //     'content-Type': 'application/json',
-        //     'Accept': '*/*',
-        //     'Cache-Control': 'no-cache',
-        //     'Access-Control-Allow-Headers': "*",
-        // }
-        // axios.get('https://mylearningspace.wlu.ca/d2l/api/lp/1.10/enrollments/myenrollments/', {headers})
-        //     .then(function (response) {
-        //         console.log(response);
-        //     })
-        //     .catch(function (error) {
-        //         console.log(error);
-        //     });
+        const D2LAppContext = new D2L.ApplicationContext(process.env.REACT_APP_APP_ID, process.env.REACT_APP_APP_KEY);
+        const D2LUserContext = D2LAppContext.createUserContextWithValues(process.env.REACT_APP_HOST_URL, 443, "lSj3-aOMLSfTGJcUkossnd", "_qWFeksnL-HqmHs2WXjaoD");
+        const URL = D2LUserContext.createAuthenticatedUrl("/d2l/api/lp/1.10/enrollments/myenrollments/", "get");
+        const data = (await axios.get(URL)).data;
         let list = [];
-        erollments['Items'].map((item) => {
-            if (item['Access']['StartDate'] && item['Access']['EndDate']) {
+        data.Items.map((item) => {
+            if (item['Access']['ClasslistRoleName'] === "Instructor") {
                 list.push(item);
             }
         });
         this.setState({ coursesList: list });
+        console.log(list);
     }
 
     getDropBoxs = async (orgUnitId) => {
-        // const headers = {
-        //     'content-Type': 'application/json',
-        //     'Accept': '*/*',
-        //     'Cache-Control': 'no-cache',
-        //     'Access-Control-Allow-Headers': "*",
-        // }
-        // axios.get('https://mylearningspace.wlu.ca/d2l/api/le/1.34/338564/dropbox/folders/', {headers})
-        //     .then(function (response) {
-        //         console.log(response);
-        //     })
-        //     .catch(function (error) {
-        //         console.log(error);
-        //     });
-        let list = [];
-        dropbox.map((item) => {
-            if (item['CategoryId'] === 10254) {
-                list.push(item);
-            }
-        });
-        this.setState({ dropboxesList: list });
+        const D2LAppContext = new D2L.ApplicationContext(process.env.REACT_APP_APP_ID, process.env.REACT_APP_APP_KEY);
+        const D2LUserContext = D2LAppContext.createUserContextWithValues(process.env.REACT_APP_HOST_URL, 443, "lSj3-aOMLSfTGJcUkossnd", "_qWFeksnL-HqmHs2WXjaoD");
+        const URL = D2LUserContext.createAuthenticatedUrl(`/d2l/api/le/1.10/${orgUnitId}/dropbox/folders/`, "get");
+        const data = (await axios.get(URL)).data;
+        this.setState({ dropboxesList: data });
+        console.log(data);
     }
 
     filenameOnchange = (index, newFilename) => {

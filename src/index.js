@@ -24,6 +24,8 @@ store.subscribe(() => {
         compilingLanguage: store.getState().compilingLanguage,
         jobs: store.getState().jobs,
         selectJob: store.getState().selectJob,
+        userContext: store.getState().userContext,
+        user: store.getState().user,
     });
 });
 
