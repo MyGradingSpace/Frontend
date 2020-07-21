@@ -8,17 +8,10 @@ import Home from './Home';
 import NewGrading from './NewGrading';
 import GradingStatus from './GradingStatus';
 import Login from './Login';
-import { getCompilingLanguage, getJobs } from '../actions';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 class App extends React.Component {
-
-  componentDidMount = async () => {
-    await this.props.dispatch(getCompilingLanguage());
-    await this.props.dispatch(getJobs("163045140"));
-  }
-
   render() {
     const style = {
       body: {
@@ -72,8 +65,6 @@ class App extends React.Component {
 }
 
 Login.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-  setLoginInformation: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({

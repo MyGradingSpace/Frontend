@@ -27,10 +27,17 @@ class NavBar extends React.Component {
     }
 
     componentDidMount = async () => {
-        const name = this.props.user.FirstName + ' ' + this.props.user.LastName;
-        const initial = this.props.user.FirstName[0] + this.props.user.LastName[0];
-        await this.setState({ name: name });
-        await this.setState({ initial: initial });
+        if (this.props.user.FirstName) {
+            const name = this.props.user.FirstName + ' ' + this.props.user.LastName;
+            const initial = this.props.user.FirstName[0] + this.props.user.LastName[0];
+            await this.setState({ name: name });
+            await this.setState({ initial: initial });
+        }
+    }
+
+    logout = () =>{
+        localStorage.clear(); 
+        window.location.reload();
     }
 
     render() {
@@ -95,7 +102,7 @@ class NavBar extends React.Component {
                 <div style={style.smallBar}>
                     <a onClick={() => { history.push("/"); window.location.reload() }}>Home{' '}</a>
                     <a onClick={this.test}>{' '} Help {' '}</a>
-                    <a onClick={() => { localStorage.clear(); window.location.reload() }}>{' '} Logout</a>
+                    <a onClick={this.logout}>{' '} Logout</a>
                 </div>
             </>
         );

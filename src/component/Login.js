@@ -1,16 +1,14 @@
 import React from 'react';
-import GoogleLogin from 'react-google-login';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { setLoginInformation, login, createUserContext, createUserInfo } from '../actions';
 import LoginPic from '../image/Login.jpg';
-import { Button, DialogContent } from '@material-ui/core';
 import D2L from '../D2L/valence';
 
 class Login extends React.Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
     }
     responseGoogle = async (response) => {
@@ -20,11 +18,10 @@ class Login extends React.Component {
         }
     }
 
-    test = async () => {
+    login = async () => {
         const D2LAppContext = new D2L.ApplicationContext(process.env.REACT_APP_APP_ID, process.env.REACT_APP_APP_KEY);
-        const loginUrl = D2LAppContext.createUrlForAuthentication(process.env.REACT_APP_HOST_URL, 443, process.env.REACT_APP_REDIRECT_URL);
+        const loginUrl = await D2LAppContext.createUrlForAuthentication(process.env.REACT_APP_HOST_URL, 443, process.env.REACT_APP_REDIRECT_URL);
         window.open(loginUrl);
-        window.close();
         let url = window.location.href;
         const redirectUrl = url.split("?x_a=")[0];
         url = url.split("?x_a=")[1]
@@ -32,12 +29,13 @@ class Login extends React.Component {
         url = url.split("&x_b=")[1];
         const xB = url.split("&x_c=")[0];
         const xC = url.split("&x_c=")[1];
-        if(redirectUrl === process.env.REACT_APP_REDIRECT_URL){
-            await this.props.dispatch(login(true));
+        console.log(xA, xB, xC);
+        if (redirectUrl === process.env.REACT_APP_REDIRECT_URL) {
             await this.props.dispatch(createUserContext(xA, xB, xC));
             await this.props.dispatch(createUserInfo(xA, xB));
+            await this.props.dispatch(login(true));
+            window.close();
         }
-        window.location.reload();  
     }
 
     render() {
@@ -108,7 +106,7 @@ class Login extends React.Component {
                 <div style={style.whiteBox}>
                     <p style={style.title}>My Grading Space</p>
                     <p style={style.subtitle}>Eazy Your Grading Life owo</p>
-                    <button style={style.loginbth} onClick={this.test}>Click Here to Login</button>
+                    <button style={style.loginbth} onClick={this.login}>Click Here to Login</button>
                 </div>
             </div>
         );
@@ -123,9 +121,7 @@ Login.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-    loginInformation: state.loginInformation,
-    login: state.login,
-    userContext: state.userContext,
+    user: state.user,
 });
 
 export default connect(mapStateToProps)(Login);

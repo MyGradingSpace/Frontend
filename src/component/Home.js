@@ -6,12 +6,18 @@ import { Button } from '@material-ui/core';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import history from '../history';
+import { getCompilingLanguage, getJobs } from '../actions';
 import { selectJob } from '../actions';
 
 
 class Home extends React.Component {
     constructor(props) {
         super(props);
+    }
+
+    componentDidMount = async () => {
+        await this.props.dispatch(getCompilingLanguage());
+        await this.props.dispatch(getJobs(this.props.user.Identifier));
     }
 
     toGradingPage = async (id) => {
@@ -64,6 +70,7 @@ Home.propTypes = {
 
 const mapStateToProps = (state) => ({
     jobs: state.jobs,
+    user: state.user,
 });
 
 export default connect(mapStateToProps)(Home);

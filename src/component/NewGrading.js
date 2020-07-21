@@ -77,8 +77,8 @@ class NewGrading extends React.Component {
             'Access-Control-Allow-Headers': "*",
         }
         const body = {
-            professorName: "Nina",
-            professorId: "163045140",
+            professorName: this.props.user.FirstName+" "+this.props.user.LastName,
+            professorId: this.props.user.Identifier,
             course: this.state.selectCourse.OrgUnit.Name,
             languageId: this.state.selectLanguage._id,
             orgUnitId: this.state.selectCourse.OrgUnit.Id,
@@ -447,6 +447,7 @@ class NewGrading extends React.Component {
 
 const mapStateToProps = (state) => ({
     compilingLanguage: state.compilingLanguage,
+    user: state.user,
 });
 
 export default connect(mapStateToProps)(NewGrading);
