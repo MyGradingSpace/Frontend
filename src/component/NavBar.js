@@ -23,7 +23,6 @@ class NavBar extends React.Component {
         const D2LUserContext = D2LAppContext.createUserContextWithValues(process.env.REACT_APP_HOST_URL, 443, "lSj3-aOMLSfTGJcUkossnd", "_qWFeksnL-HqmHs2WXjaoD");
         const URL = D2LUserContext.createAuthenticatedUrl("/d2l/api/le/1.10/219419/dropbox/folders/54721/submissions/", "get");
         const data = (await axios.get(URL)).data;
-        console.log(data);
     }
 
     componentDidMount = async () => {

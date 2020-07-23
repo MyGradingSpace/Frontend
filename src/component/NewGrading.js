@@ -103,20 +103,16 @@ class NewGrading extends React.Component {
         const URL = D2LUserContext.createAuthenticatedUrl(`/d2l/api/le/1.10/${orgUnitId}/dropbox/folders/${folderId}/submissions/`, "get");
         const submission = (await axios.get(URL)).data;
         const grading = [];
-        console.log(submission);
         submission.map(sub => {
             let fileName1, fileId1;
             if (sub.Submissions.length === 0) {
-                console.log("0?")
                 fileName1 = null;
                 fileId1 = null;
             } else {
-                console.log("1?")
                 const item = sub.Submissions[sub.Submissions.length - 1];
                 fileName1 = item.Files[0].FileName;
                 fileId1 = item.Files[0].FileId;
             }
-            console.log(fileName1, fileId1);
             const item = {
                 DisplayName: sub.Entity.DisplayName,
                 EntityId: sub.Entity.EntityId,
@@ -125,7 +121,6 @@ class NewGrading extends React.Component {
                 submissionId: sub.Submissions[sub.Submissions.length - 1].Id,
                 markings: this.configToResult(this.state.testConfig),
             }
-            console.log(item);
             grading.push(item);
         })
         const body = {
@@ -144,7 +139,6 @@ class NewGrading extends React.Component {
             'Cache-Control': 'no-cache',
             'Access-Control-Allow-Headers': "*",
         }
-        console.log(body);
         const response = await axios.post(process.env.REACT_APP_API + '/grading', body, { headers }).catch(function (error) {
             console.log(error);
             return 400;
@@ -218,7 +212,6 @@ class NewGrading extends React.Component {
             }
         });
         this.setState({ coursesList: list });
-        console.log(list);
     }
 
     getDropBoxs = async (orgUnitId) => {
@@ -227,7 +220,6 @@ class NewGrading extends React.Component {
         const URL = D2LUserContext.createAuthenticatedUrl(`/d2l/api/le/1.10/${orgUnitId}/dropbox/folders/`, "get");
         const data = (await axios.get(URL)).data;
         this.setState({ dropboxesList: data });
-        console.log(data);
     }
 
     filenameOnchange = (index, newFilename) => {

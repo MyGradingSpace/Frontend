@@ -29,7 +29,6 @@ class Login extends React.Component {
         url = url.split("&x_b=")[1];
         const xB = url.split("&x_c=")[0];
         const xC = url.split("&x_c=")[1];
-        console.log(xA, xB, xC);
         if (redirectUrl === process.env.REACT_APP_REDIRECT_URL) {
             await this.props.dispatch(createUserContext(xA, xB, xC));
             await this.props.dispatch(createUserInfo(xA, xB));
