@@ -6,8 +6,7 @@ import { Button } from '@material-ui/core';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import history from '../history';
-import { getCompilingLanguage, getJobs } from '../actions';
-import { selectJob } from '../actions';
+import { getCompilingLanguage, getJobs, selectJob } from '../actions';
 
 
 class Home extends React.Component {

@@ -77,13 +77,13 @@ class NewGrading extends React.Component {
             'Access-Control-Allow-Headers': "*",
         }
         const body = {
-            professorName: this.props.user.FirstName+" "+this.props.user.LastName,
+            professorName: this.props.user.FirstName + " " + this.props.user.LastName,
             professorId: this.props.user.Identifier,
             course: this.state.selectCourse.OrgUnit.Name,
-            languageId: this.state.selectLanguage._id,
             orgUnitId: this.state.selectCourse.OrgUnit.Id,
             dropbox: this.state.selectDropbox.Name,
             folderId: this.state.selectDropbox.Id,
+            languageId: this.state.selectLanguage._id,
             configuration: this.state.testConfig,
         }
         const response = await axios.post(process.env.REACT_APP_API + '/job', body, { headers }).catch(function (error) {
@@ -103,31 +103,37 @@ class NewGrading extends React.Component {
         const URL = D2LUserContext.createAuthenticatedUrl(`/d2l/api/le/1.10/${orgUnitId}/dropbox/folders/${folderId}/submissions/`, "get");
         const submission = (await axios.get(URL)).data;
         const grading = [];
+        console.log(submission);
         submission.map(sub => {
             let fileName1, fileId1;
             if (sub.Submissions.length === 0) {
+                console.log("0?")
                 fileName1 = null;
                 fileId1 = null;
             } else {
+                console.log("1?")
                 const item = sub.Submissions[sub.Submissions.length - 1];
-                fileName1 = item.Files.FileName;
-                fileId1 = item.Files.FileId;
+                fileName1 = item.Files[0].FileName;
+                fileId1 = item.Files[0].FileId;
             }
+            console.log(fileName1, fileId1);
             const item = {
                 DisplayName: sub.Entity.DisplayName,
                 EntityId: sub.Entity.EntityId,
                 FileName: fileName1,
                 fileId: fileId1,
+                submissionId: sub.Submissions[sub.Submissions.length - 1].Id,
                 markings: this.configToResult(this.state.testConfig),
             }
+            console.log(item);
             grading.push(item);
         })
         const body = {
             jobId: data._id,
             credential: {
-                SessionId: "test",
-                SessionKey: "test",
-                SessionSkew: "test"
+                SessionId: this.props.userContext.xA ? this.props.userContext.xA : "error",
+                SessionKey: this.props.userContext.xB ? this.props.userContext.xB : "error",
+                SessionSkew: this.props.userContext.xC ? this.props.userContext.xC: "error",
             },
             objects: grading,
             gradingId: data.gradingId,
@@ -138,6 +144,7 @@ class NewGrading extends React.Component {
             'Cache-Control': 'no-cache',
             'Access-Control-Allow-Headers': "*",
         }
+        console.log(body);
         const response = await axios.post(process.env.REACT_APP_API + '/grading', body, { headers }).catch(function (error) {
             console.log(error);
             return 400;
@@ -158,6 +165,7 @@ class NewGrading extends React.Component {
                     output: '',
                     expectOutput: item.output,
                     marks: item.marks,
+                    match: item.output === item.marks,
                 }
                 result.push(thing);
             });
@@ -448,6 +456,7 @@ class NewGrading extends React.Component {
 const mapStateToProps = (state) => ({
     compilingLanguage: state.compilingLanguage,
     user: state.user,
+    userContext: state.userContext,
 });
 
 export default connect(mapStateToProps)(NewGrading);

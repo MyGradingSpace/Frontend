@@ -44,6 +44,7 @@ class Service {
                 console.log(error);
                 return error;
             });
+        console.log(response);
         return response.data;
     }
 
