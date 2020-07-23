@@ -7,6 +7,8 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import D2L from '../D2L/valence';
 import axios from 'axios';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import Dropdown from 'react-bootstrap/Dropdown';
 
 class NavBar extends React.Component {
 
@@ -34,8 +36,8 @@ class NavBar extends React.Component {
         }
     }
 
-    logout = () =>{
-        localStorage.clear(); 
+    logout = () => {
+        localStorage.clear();
         window.location.reload();
     }
 
@@ -65,7 +67,8 @@ class NavBar extends React.Component {
                 marginLeft: '-50px'
             },
             nameBar: {
-                display: 'inline-block',
+                display: 'grid',
+                gridTemplateColumns: 'auto auto',
                 float: 'right',
                 marginTop: '25px',
                 marginRight: '5%',
@@ -94,14 +97,17 @@ class NavBar extends React.Component {
                         <img style={style.logo} src={logo} alt='Logo' />
                         <div style={style.nameBar}>
                             <Avatar variant="rounded" style={style.avatar}> {this.state.initial} </Avatar>
-                            <div style={style.name}> {this.state.name}</div>
+                            <Dropdown>
+                                <Dropdown.Toggle style={{ backgroundColor: 'white', borderColor: 'white', color: 'black', }}> {this.state.name} </Dropdown.Toggle>
+                                <Dropdown.Menu >
+                                    <Dropdown.Item onClick={() => { history.push("/"); window.location.reload() }}>Home</Dropdown.Item>
+                                    <Dropdown.Item onClick={this.test}>Help</Dropdown.Item>
+                                    <Dropdown.Divider />
+                                    <Dropdown.Item onClick={this.logout}>Logout</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
                         </div>
                     </div>
-                </div>
-                <div style={style.smallBar}>
-                    <a onClick={() => { history.push("/"); window.location.reload() }}>Home{' '}</a>
-                    <a onClick={this.test}>{' '} Help {' '}</a>
-                    <a onClick={this.logout}>{' '} Logout</a>
                 </div>
             </>
         );

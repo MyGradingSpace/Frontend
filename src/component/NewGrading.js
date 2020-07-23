@@ -430,14 +430,14 @@ class NewGrading extends React.Component {
                             </Button>
                         </div>
                         <Dialog open={this.state.step3error}>
-                            <DialogTitle>Oops! Something went wrong.</DialogTitle>
-                            <div>Failed at creating grading assginment, Please try it later!. </div>
-                            <Button color="primary" variant="contained" onClick={() => { this.setState({ step3error: null }); }}>Ok</Button>
+                            <DialogTitle style={{padding:'30px 50px'}}>Oops! Something went wrong.</DialogTitle>
+                            <div style={{padding:'0px 50px', marginBottom:'40px'}}>Failed at creating grading assginment, Please try it later!. </div>
+                            <Button color="primary" variant="contained" onClick={() => { this.setState({ step3error: null }); }} style={{width:'200px', margin:'auto', marginBottom:'40px'}}>Ok</Button>
                         </Dialog>
                         <Dialog open={this.state.step3error === false}>
-                            <DialogTitle>Grading assginment created!</DialogTitle>
-                            <div>Our machine will start marking this assginment, you could go back to Home page to see the progress. </div>
-                            <Button color="primary" variant="contained" onClick={() => { this.setState({ step3error: null }); }}>Ok</Button>
+                            <DialogTitle style={{padding:'20px 50px'}}>Grading assginment created!</DialogTitle>
+                            <div style={{padding:'0px 50px', marginBottom:'40px'}}>Our machine will start marking this assginment, you could go back to Home page to see the progress. </div>
+                            <Button color="primary" variant="contained" onClick={() => { this.setState({ step3error: null }); }} style={{width:'200px', margin:'auto', marginBottom:'40px'}}>Ok</Button>
                         </Dialog>
                     </div>
                 </div>
