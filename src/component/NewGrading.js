@@ -97,8 +97,9 @@ class NewGrading extends React.Component {
     }
 
     createGrading = async (orgUnitId, folderId, data) => {
+        const userContext = await this.props.userContext;
         const D2LAppContext = new D2L.ApplicationContext(process.env.REACT_APP_APP_ID, process.env.REACT_APP_APP_KEY);
-        const D2LUserContext = D2LAppContext.createUserContextWithValues(process.env.REACT_APP_HOST_URL, 443, "lSj3-aOMLSfTGJcUkossnd", "_qWFeksnL-HqmHs2WXjaoD");
+        const D2LUserContext = D2LAppContext.createUserContextWithValues(process.env.REACT_APP_HOST_URL, 443, userContext.xA, userContext.xB);
         const URL = D2LUserContext.createAuthenticatedUrl(`/d2l/api/le/1.10/${orgUnitId}/dropbox/folders/${folderId}/submissions/`, "get");
         const submission = (await axios.get(URL)).data;
         const grading = [];
@@ -200,8 +201,9 @@ class NewGrading extends React.Component {
     }
 
     getCourses = async () => {
+        const userContext = await this.props.userContext;
         const D2LAppContext = new D2L.ApplicationContext(process.env.REACT_APP_APP_ID, process.env.REACT_APP_APP_KEY);
-        const D2LUserContext = D2LAppContext.createUserContextWithValues(process.env.REACT_APP_HOST_URL, 443, "lSj3-aOMLSfTGJcUkossnd", "_qWFeksnL-HqmHs2WXjaoD");
+        const D2LUserContext = D2LAppContext.createUserContextWithValues(process.env.REACT_APP_HOST_URL, 443, userContext.xA, userContext.xB);
         const URL = D2LUserContext.createAuthenticatedUrl("/d2l/api/lp/1.10/enrollments/myenrollments/", "get");
         const data = (await axios.get(URL)).data;
         let list = [];
@@ -214,8 +216,9 @@ class NewGrading extends React.Component {
     }
 
     getDropBoxs = async (orgUnitId) => {
+        const userContext = await this.props.userContext;
         const D2LAppContext = new D2L.ApplicationContext(process.env.REACT_APP_APP_ID, process.env.REACT_APP_APP_KEY);
-        const D2LUserContext = D2LAppContext.createUserContextWithValues(process.env.REACT_APP_HOST_URL, 443, "lSj3-aOMLSfTGJcUkossnd", "_qWFeksnL-HqmHs2WXjaoD");
+        const D2LUserContext = D2LAppContext.createUserContextWithValues(process.env.REACT_APP_HOST_URL, 443, userContext.xA, userContext.xB);
         const URL = D2LUserContext.createAuthenticatedUrl(`/d2l/api/le/1.10/${orgUnitId}/dropbox/folders/`, "get");
         const data = (await axios.get(URL)).data;
         this.setState({ dropboxesList: data });
