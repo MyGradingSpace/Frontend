@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, Stepper, Step, StepLabel, Select, MenuItem, TextField } from '@material-ui/core';
-import { submission } from '../fakeResponce';
 import history from '../history';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';

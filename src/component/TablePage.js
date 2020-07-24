@@ -14,6 +14,7 @@ import Paper from '@material-ui/core/Paper';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import { connect } from 'react-redux';
+import {createMarkingResult} from '../actions';
 
 class TablePage extends React.Component {
 
@@ -25,16 +26,17 @@ class TablePage extends React.Component {
     }
 
     componentDidMount = async () => {
-        const grading = this.props.selectJob.objects;
+        const grading = this.props.selectGrading.objects;
         let rows = [];
         await grading.map(async (item) => {
-            const row = await this.createData(item.DisplayName, item.markings);
+            const row = await this.createData(item.DisplayName, item.markings, item.EntityId);
             rows.push(row);
         });
-        this.setState({ rows: rows });
+        await this.setState({ rows: rows });
+        await this.props.dispatch(createMarkingResult(rows));
     }
 
-    createData = async (displayName, details) => {
+    createData = async (displayName, details, EntityId) => {
         const List = [];
         let i = 1;
         let correct = 0;
@@ -59,6 +61,7 @@ class TablePage extends React.Component {
             });
         });
         const re = {
+            EntityId: EntityId,
             displayName: displayName,
             correct: correct,
             total: i - 1,
@@ -152,10 +155,11 @@ function Row(props) {
 
 
 TablePage.propTypes = {
+    dispatch: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
-    selectJob: state.selectJob[0],
+    selectGrading: state.selectGrading[0],
 });
 
 export default connect(mapStateToProps)(TablePage);

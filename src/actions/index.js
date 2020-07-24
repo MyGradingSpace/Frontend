@@ -30,10 +30,16 @@ export const getJobs = (professorId) => async (dispatch) => {
     });
 };
 
-export const selectJob = (id) => async (dispatch) => {
+
+export const selectJob = (job) => ({
+    type: 'SELECT_JOB',
+    payload: job,
+});
+
+export const selectGrading = (id) => async (dispatch) => {
     const response = await service.getGrading(id);
     dispatch({
-        type: 'SELECT_JOB',
+        type: 'SELECT_GRADING',
         payload: response,
     });
 };
@@ -54,3 +60,9 @@ export const createUserInfo = (xA, xB) => async (dispatch) => {
         payload: data,
     });
 };
+
+export const createMarkingResult = (obj) => ({
+    type: 'STUDENTS_MARKS',
+    payload: obj,
+
+});

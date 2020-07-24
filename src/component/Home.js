@@ -6,7 +6,7 @@ import { Button } from '@material-ui/core';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import history from '../history';
-import { getCompilingLanguage, getJobs, selectJob } from '../actions';
+import { getCompilingLanguage, getJobs, selectJob, selectGrading } from '../actions';
 
 
 class Home extends React.Component {
@@ -19,8 +19,9 @@ class Home extends React.Component {
         await this.props.dispatch(getJobs(this.props.user.Identifier));
     }
 
-    toGradingPage = async (id) => {
-        await this.props.dispatch(selectJob(id));
+    toGradingPage = async (job) => {
+        await this.props.dispatch(selectJob(job));
+        await this.props.dispatch(selectGrading(job._id));
         history.push('/status');
         window.location.reload();
     }
@@ -52,7 +53,7 @@ class Home extends React.Component {
                                 <div>DropBox: <b>{job.dropbox}</b></div>
                                 <div>Grading: <b>{job.gradingCounts}/{job.submissionCounts}</b></div>
                             </div>
-                            <Button disabled={job.submissionCounts === 0} style={{ backgroundColor: '#330072', color: 'white', fontSize: '14px', marginTop: '20px', marginBottom: '30px' }} onClick={() => this.toGradingPage(job._id)}>View Grading Result</Button>
+                            <Button disabled={job.submissionCounts === 0} style={{ backgroundColor: '#330072', color: 'white', fontSize: '14px', marginTop: '20px', marginBottom: '30px' }} onClick={() => this.toGradingPage(job)}>View Grading Result</Button>
                         </div>
                     ))}
                 </div>

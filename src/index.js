@@ -24,8 +24,10 @@ store.subscribe(() => {
         compilingLanguage: store.getState().compilingLanguage,
         jobs: store.getState().jobs,
         selectJob: store.getState().selectJob,
+        selectGrading: store.getState().selectGrading,
         userContext: store.getState().userContext,
         user: store.getState().user,
+        markingResult: store.getState().markingResult,
     });
 });
 

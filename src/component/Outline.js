@@ -3,7 +3,7 @@ import { Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails } 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import history from '../history';
-import { selectJob } from '../actions';
+import { selectJob, selectGrading } from '../actions';
 
 class Outline extends React.Component {
 
@@ -11,8 +11,9 @@ class Outline extends React.Component {
         super(props);
     }
 
-    goToStatusPage(jobId){
-        this.props.dispatch(selectJob(jobId));
+    goToStatusPage = async (job) => {
+        await this.props.dispatch(selectJob(job));
+        await this.props.dispatch(selectGrading(job._id));
         history.push("/status");
         window.location.reload();
     }
@@ -39,7 +40,7 @@ class Outline extends React.Component {
         this.props.jobs.map(job => {
             if (job.submissionCounts === job.gradingCounts && job.submissionCounts != 0) {
                 unpublishedJobs.push(job);
-            } else if (job.submissionCounts != job.gradingCounts && job.submissionCounts != 0){
+            } else if (job.submissionCounts != job.gradingCounts && job.submissionCounts != 0) {
                 gradingJobs.push(job);
             }
         });
@@ -54,7 +55,7 @@ class Outline extends React.Component {
                             {gradingJobs.map(job => (
                                 <div style={{ marginTop: '20px', marginBottom: '20px' }}>
                                     <div style={{ display: 'inline' }}>{job.course} - {job.dropbox} </div>
-                                    <Button style={style.btn} onClick={()=>{this.goToStatusPage(job._id)}}> Details</Button>
+                                    <Button style={style.btn} onClick={() => { this.goToStatusPage(job) }}> Details</Button>
                                 </div>
                             ))}
                         </div>
@@ -66,11 +67,11 @@ class Outline extends React.Component {
                         <div>Unpublished Assignments: <a style={{ color: 'green', fontWeight: 'bold' }}>{unpublishedJobs.length}</a></div>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
-                    <div style={{ marginLeft: '5%', width: '90%' }}>
+                        <div style={{ marginLeft: '5%', width: '90%' }}>
                             {unpublishedJobs.map(job => (
                                 <div style={{ marginTop: '20px', marginBottom: '20px' }}>
                                     <div style={{ display: 'inline' }}>{job.course} - {job.dropbox} </div>
-                                    <Button style={style.btn} onClick={()=>{this.goToStatusPage(job._id)}}> Details</Button>
+                                    <Button style={style.btn} onClick={() => { this.goToStatusPage(job) }}> Details</Button>
                                 </div>
                             ))}
                         </div>
