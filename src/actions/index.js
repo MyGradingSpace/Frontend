@@ -1,4 +1,4 @@
-import Service from '../service/serviec';
+import Service from '../service/service';
 import D2L from '../D2L/valence';
 import axios from 'axios';
 

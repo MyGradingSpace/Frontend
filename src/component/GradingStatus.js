@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import D2L from '../D2L/valence';
 import axios from 'axios';
 import history from '../history';
-import Service from '../service/serviec';
+import Service from '../service/service';
 
 class GradingStatus extends React.Component {
     constructor(props) {
@@ -19,7 +19,7 @@ class GradingStatus extends React.Component {
             dialogOpen: false,
             finish: false,
         }
-        
+        this.service = new Service();
     }
 
     componentDidMount = () => {
@@ -41,9 +41,11 @@ class GradingStatus extends React.Component {
         const URL = D2LUserContext.createAuthenticatedUrl(`/d2l/api/le/1.10/${orgUnitId}/grades/`, "get");
         const data = (await axios.get(URL)).data;
         let gradeId = 0;
+        let maxPoints = 0;
         for (let i = 0; i < data.length; i++) {
             if (data[i].Name === job.dropbox) {
                 gradeId = data[i].Id;
+                maxPoints = data[i].MaxPoints;
                 break;
             }
         }
@@ -61,7 +63,8 @@ class GradingStatus extends React.Component {
                     Type: 'Text'
                 },
                 GradeObjectType: 1,
-                PointsNumerator: grade.marks,
+                PointsNumerator: 1 / grade.fullMarks * maxPoints,
+                
             };
             const data = await axios.put(URL, body);
             await this.setState({ count: this.state.count + 1 });
@@ -76,11 +79,10 @@ class GradingStatus extends React.Component {
     }
 
     close = async() =>{
-        const service = new Service();
         await this.setState({finish: false});
         if(this.state.error.length === 0){
             const job = await this.props.selectJob;
-            await service.deleteJob(job._id);
+            await this.service.deleteJob(job.gradingId);
             history.push("/");
             window.location.reload();
         }

@@ -53,11 +53,13 @@ class Service {
             'Cache-Control': 'no-cache',
             'Access-Control-Allow-Headers': "*",
         }
-        const response = await axios.delete(process.env.REACT_APP_API + `/job?jobId=${jobId}`, { headers })
+        const response = await axios.delete(process.env.REACT_APP_API + `/job?gradingId=${jobId}`, { headers })
             .catch(function (error) {
                 console.log(error);
                 return error;
             });
+
+        console.log(response);
         return response.data;
     }
 

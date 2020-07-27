@@ -9,6 +9,7 @@ import D2L from '../D2L/valence';
 import axios from 'axios';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
+import Service from '../service/service';
 
 class NavBar extends React.Component {
 
@@ -18,27 +19,10 @@ class NavBar extends React.Component {
             initial: '',
             name: '',
         }
+        this.service = new Service();
     }
 
     test = async () => {
-        const D2LAppContext = new D2L.ApplicationContext(process.env.REACT_APP_APP_ID, process.env.REACT_APP_APP_KEY);
-        const D2LUserContext = D2LAppContext.createUserContextWithValues(process.env.REACT_APP_HOST_URL, 443, "lSj3-aOMLSfTGJcUkossnd", "_qWFeksnL-HqmHs2WXjaoD");
-        const URL = D2LUserContext.createAuthenticatedUrl("/d2l/api/le/1.10/219419/grades/223922/values/94232", "put");
-        const body = {
-            Comments: {
-                Content: '',
-                Type: 'Text'
-            },
-            PrivateComments: {
-                Content: '',
-                Type: 'Text'
-            },
-            GradeObjectType: 1,
-            PointsNumerator: 2.0
-            
-        };
-        const data = (await axios.put(URL, body));
-        console.log(data);
     }
 
     componentDidMount = async () => {
