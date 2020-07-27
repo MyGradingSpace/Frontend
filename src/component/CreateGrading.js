@@ -15,7 +15,7 @@ class CreatGrading extends React.Component {
             body: {
                 backgroundColor: 'white',
                 boxShadow: '0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12)',
-                height: '70px',
+                display:"relative",
                 color: 'white',
                 textTransform: 'capitalize',
                 fontSize: '16px',
@@ -24,16 +24,14 @@ class CreatGrading extends React.Component {
                 marginRight: '5px'
             },
             btn: {
-                position: 'absolute',
                 backgroundColor: '#F2A900',
-                // backgroundColor: '#330072',
                 color: 'white',
-                padding: '10px 0px',
-                width: '24%',
-                margin: 'auto',
+                padding: '10px 10px',
+                width: '90%',
+                marginLeft:'5%',
                 fontSize: '15px',
                 marginTop: '10px',
-                marginLeft: '1.5%',
+                marginBottom: '10px',
             },
         }
         return (
@@ -43,7 +41,6 @@ class CreatGrading extends React.Component {
                         <AddCircleOutlineIcon style={style.icon} />
                     create an assignment grading
                 </Button>
-                    <div style={style.text}></div>
                 </div>
             </div>
         );

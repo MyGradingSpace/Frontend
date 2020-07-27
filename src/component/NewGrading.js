@@ -298,25 +298,40 @@ class NewGrading extends React.Component {
             icon: {
                 marginRight: '5px'
             },
-            btn: {
-                position: 'absolute',
-                backgroundColor: '#F2A900',
-                // backgroundColor: '#330072',
-                color: 'white',
-                padding: '10px 0px',
-                width: '24%',
-                margin: 'auto',
-                fontSize: '15px',
-                marginTop: '10px',
-                marginLeft: '1.5%',
-            },
             content: {
                 width: '80%',
                 margin: 'auto',
                 padding: '60px 0px'
             },
-            btnGroup: {
-
+            addCaseBtn:{
+                backgroundColor:'rgba(0,111,191,0.8)',
+                color:'white',
+                borderColor:"rgba(1,1,1,0)",
+                borderRadius:'5px',
+                fontSize:'12px',
+            },
+            addTestBtn:{
+                backgroundColor:'rgba(0,111,191,1)',
+                color:'white',
+                borderColor:"rgba(1,1,1,0)",
+                borderRadius:'5px',
+                fontSize:'12px',
+            },
+            deleteCaseBtn:{
+                backgroundColor:'white',
+                color:'rgba(0,111,191,1)',
+                borderColor:"rgba(0,111,191,0.4)",
+                borderRadius:'5px',
+                fontSize:'12px',
+                marginLeft:'5px',
+            },
+            deleteTestBtn:{
+                backgroundColor:'white',
+                color:'rgba(0,111,191,1)',
+                borderColor:"rgba(0,111,191,1)",
+                borderRadius:'5px',
+                fontSize:'12px',
+                marginLeft:'5px',
             },
         }
         const stepInstruction = ['Select Course and Dropbox', 'Update Test and Answer Files', 'Veiw All'];
@@ -358,33 +373,33 @@ class NewGrading extends React.Component {
                             <div>
                                 {this.state.testConfig.map((test, index) => (
                                     <div>
-                                        <div style={{ marginTop: '20px', display: 'inline', fontSize: '25px', color: 'Red' }}> Test {index + 1}:</div>
-                                        <button onClick={() => this.deleteTest(index)}>delete Test</button>
+                                        <div style={{ marginTop: '20px', display: 'inline', fontSize: '25px', color: '#330072' }}> Test {index + 1}:</div>
+                                        <button style={style.deleteTestBtn} onClick={() => this.deleteTest(index)}>Delete Test</button>
                                         <br />
                                         <div style={{ display: 'inline-block', marginTop: '20px' }}>Testing File Name</div>
-                                        <TextField style={{ marginLeft: '20px', marginTop: '0px', width: 'calc(100% - 200px)' }} required label="Required" value={test.filename} onChange={(e) => this.filenameOnchange(index, e.target.value)} />
+                                        <input style={{ marginLeft: '20px', marginTop: '0px', width: 'calc(100% - 200px)',  }} type="text" required label="Required" value={test.filename} onChange={(e) => this.filenameOnchange(index, e.target.value)}/>
                                         {test.testCases.map((item, i) => (
                                             <div style={{ marginTop: '20px' }}>
                                                 <div style={{ marginTop: '20px', display: 'inline' }}> Case {i + 1}:</div>
-                                                <button onClick={() => this.deleteCase(index, i)}>delete case</button>
+                                                <button style={style.deleteCaseBtn} onClick={() => this.deleteCase(index, i)}>Delete Case</button>
                                                 <div style={{ display: 'grid', gridTemplateColumns: '50% 50%', marginTop: '10px' }}>
                                                     <div>
                                                         <div>User Input:</div>
-                                                        <TextField multiline rows={2} style={{ width: '90%' }} value={item.input} onChange={(e) => this.inputOnchange(index, i, e.target.value)} />
+                                                        <textarea rows="3" style={{ width: '90%'}} value={item.input} onChange={(e) => this.inputOnchange(index, i, e.target.value)}/>
                                                     </div>
                                                     <div>
                                                         <div>Expect Output:</div>
-                                                        <TextField multiline rows={2} style={{ width: '90%' }} value={item.output} onChange={(e) => this.outputOnchange(index, i, e.target.value)} />
+                                                        <textarea rows="3" style={{ width: '90%' }} value={item.output} onChange={(e) => this.outputOnchange(index, i, e.target.value)}/>
                                                     </div>
                                                 </div>
                                                 <div style={{ marginTop: '15px', display: 'inline-block' }}>Marks Worth:</div>
                                                 <TextField value={item.marks} style={{ marginTop: '10px', marginLeft: '20px', textAlign: 'center' }} type='number' onChange={(e) => this.marksOnchange(index, i, parseInt(e.target.value))} />
                                             </div>
                                         ))}
-                                        <button onClick={() => this.addCase(index)}>add case</button>
+                                        <button style={style.addCaseBtn} onClick={() => this.addCase(index)}>Add Case</button>
                                     </div>
                                 ))}
-                                <button onClick={this.addTest}>add test</button>
+                                <button style={style.addTestBtn} onClick={this.addTest}>Add Test</button>
                                 {this.state.step1error && (<div style={{ color: 'red', marginBottom: '10px' }}> At lease one of the testing file name is empty!</div>)}
                             </div>)}
 
