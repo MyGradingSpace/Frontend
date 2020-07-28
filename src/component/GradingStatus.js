@@ -38,37 +38,24 @@ class GradingStatus extends React.Component {
         const orgUnitId = job.orgUnitId;
         const D2LAppContext = new D2L.ApplicationContext(process.env.REACT_APP_APP_ID, process.env.REACT_APP_APP_KEY);
         const D2LUserContext = D2LAppContext.createUserContextWithValues(process.env.REACT_APP_HOST_URL, 443, userContext.xA, userContext.xB);
-        const URL = D2LUserContext.createAuthenticatedUrl(`/d2l/api/le/1.10/${orgUnitId}/grades/`, "get");
-        const data = (await axios.get(URL)).data;
-        let gradeId = 0;
-        let maxPoints = 0;
-        for (let i = 0; i < data.length; i++) {
-            if (data[i].Name === job.dropbox) {
-                gradeId = data[i].Id;
-                maxPoints = data[i].MaxPoints;
-                break;
-            }
-        }
-
+        const folderId = job.folderId;
         grading.map(async (grade) => {
-            const userId = grade.EntityId;
-            const URL = D2LUserContext.createAuthenticatedUrl(`/d2l/api/le/1.10/${orgUnitId}/grades/${gradeId}/values/${userId}`, "put");
-            const body = {
-                Comments: {
-                    Content: '',
-                    Type: 'Text'
+            const entityId = grade.EntityId;
+            const feedbackURL = D2LUserContext.createAuthenticatedUrl(`/d2l/api/le/1.10/${orgUnitId}/dropbox/folders/${folderId}/feedback/user/${entityId}`, "post");
+            const body2 = {
+                Score: grade.marks,
+                Feedback: {
+                    Text: JSON.stringify(grade.details),
+                    Html: null
                 },
-                PrivateComments: {
-                    Content: '',
-                    Type: 'Text'
-                },
-                GradeObjectType: 1,
-                PointsNumerator: 1 / grade.fullMarks * maxPoints,
-                
-            };
-            const data = await axios.put(URL, body);
+                RubricAssessments: [],
+                IsGraded: true,
+                GradedSymbol: null
+            }
+            const data2 = await axios.post(feedbackURL, body2);
+            
             await this.setState({ count: this.state.count + 1 });
-            if (data.status !== 200) {
+            if (data2.status !== 200) {
                 const list = this.state.error;
                 list.push(grade.DisplayName);
                 await this.setState({ error: list });
@@ -78,9 +65,9 @@ class GradingStatus extends React.Component {
         await this.setState({ finish: true });
     }
 
-    close = async() =>{
-        await this.setState({finish: false});
-        if(this.state.error.length === 0){
+    close = async () => {
+        await this.setState({ finish: false });
+        if (this.state.error.length === 0) {
             const job = await this.props.selectJob;
             await this.service.deleteJob(job.gradingId);
             history.push("/");
@@ -108,7 +95,7 @@ class GradingStatus extends React.Component {
                 padding: '10px 50px'
             },
             btn2: {
-                float:'right',
+                float: 'right',
                 backgroundColor: '#330072',
                 fontSize: '15px',
                 color: 'white',
@@ -132,7 +119,7 @@ class GradingStatus extends React.Component {
                     <div style={{ padding: '50px 50px' }}>
                         <div style={{ fontSize: '25px', color: '#330072' }}>Grades Upload Completed!</div>
                         {this.state.error.length === 0 && (<div>Success Uploaded All Students Grades !</div>)}
-                        {this.state.error.length !== 0 && (<div>Failed to upload those students: <br/>{this.state.error.map(name => (<b>{name}<br/></b>))}</div>)}
+                        {this.state.error.length !== 0 && (<div>Failed to upload those students: <br />{this.state.error.map(name => (<b>{name}<br /></b>))}</div>)}
                         <Button style={style.btn2} onClick={this.close}> Close</Button>
                     </div>
                 </Dialog>
