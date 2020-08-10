@@ -32,7 +32,7 @@ class TablePage extends React.Component {
             const row = await this.createData(item.DisplayName, item.markings, item.EntityId);
             rows.push(row);
         });
-        await this.setState({ rows: rows });
+        this.setState({ rows: rows });
         await this.props.dispatch(createMarkingResult(rows));
     }
 

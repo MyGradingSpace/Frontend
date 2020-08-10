@@ -30,7 +30,7 @@ class GradingStatus extends React.Component {
     }
 
     publishGrading = async () => {
-        await this.setState({ dialogOpen: true });
+        this.setState({ dialogOpen: true });
         const job = await this.props.selectJob;
         const userContext = await this.props.userContext;
         const grading = await this.props.markingResult;
@@ -45,7 +45,7 @@ class GradingStatus extends React.Component {
             const body2 = {
                 Score: grade.marks,
                 Feedback: {
-                    Text: JSON.stringify(grade.details),
+                    Text: this.makeDetailsReadable(grade.details),
                     Html: null
                 },
                 RubricAssessments: [],
@@ -53,20 +53,32 @@ class GradingStatus extends React.Component {
                 GradedSymbol: null
             }
             const data2 = await axios.post(feedbackURL, body2);
-            
-            await this.setState({ count: this.state.count + 1 });
+            this.setState({ count: this.state.count + 1 });
             if (data2.status !== 200) {
                 const list = this.state.error;
                 list.push(grade.DisplayName);
-                await this.setState({ error: list });
+                this.setState({ error: list });
             }
         })
-        await this.setState({ dialogOpen: false });
-        await this.setState({ finish: true });
+        this.setState({ dialogOpen: false });
+        this.setState({ finish: true });
+    }
+
+    makeDetailsReadable = (details) => {
+        let feedback = "";
+        for (let i = 0; i < details.length; i++){
+            feedback += "File Name: "+ details[i].fileName + ", ";
+            feedback += "Case Number: "+ details[i].case + ", ";
+            feedback += "Output: "+ details[i].output + ", ";
+            feedback += "Expect Output: "+ details[i].expectOutput + ", ";
+            feedback += "Result: "+ details[i].result + "; ";
+            feedback += "\n";
+        }
+        return feedback;
     }
 
     close = async () => {
-        await this.setState({ finish: false });
+        this.setState({ finish: false });
         if (this.state.error.length === 0) {
             const job = await this.props.selectJob;
             await this.service.deleteJob(job.gradingId);
@@ -88,7 +100,6 @@ class GradingStatus extends React.Component {
                 marginLeft: '20px',
             },
             btn: {
-                // float:'right',
                 backgroundColor: '#F2A900',
                 fontSize: '15px',
                 color: 'white',
